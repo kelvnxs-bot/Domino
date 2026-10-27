@@ -39,6 +39,73 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .chat-btn{position:relative;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer}
 .badge{position:absolute;top:-6px;right:-6px;background:var(--danger);color:#2a0600;border-radius:10px;font-size:.7rem;font-weight:800;padding:1px 6px}
 .body{flex:1;min-height:0;display:flex}
+.area{flex:1;min-width:0;display:flex;flex-direction:column;overflow:auto}
+.top-actions{display:flex;gap:8px;align-items:center}
+.btn-exit{background:rgba(255,155,138,.12);border:1px solid rgba(255,155,138,.5);color:var(--danger);border-radius:8px;padding:5px 12px;cursor:pointer;font-weight:600}
+/* menu */
+.menu{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 16px 28px;gap:14px}
+.menu h2{margin:4px 0 0}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:min(100%,560px)}
+.card{display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px 12px;border-radius:14px;background:var(--panel);border:1px solid var(--line);cursor:pointer;text-align:center;transition:transform .12s,border-color .12s}
+.card:hover{transform:translateY(-3px);border-color:var(--accent)}
+.card .ic{height:52px;display:flex;align-items:center;justify-content:center;gap:4px;--u:18px}
+.card .t{font-weight:800;font-size:1.05rem}
+.card .s{font-size:.8rem;color:var(--muted)}
+.card .tag{font-size:.72rem;color:var(--accent);font-weight:700}
+.ic-velha{font-size:2.1rem;font-weight:900;letter-spacing:2px}.ic-velha .x{color:var(--accent)}.ic-velha .o{color:#7cc4ff}
+.ic-l4 i{width:18px;height:18px;border-radius:50%;display:inline-block}
+.ic-forca{font-family:ui-monospace,monospace;font-size:1.3rem;font-weight:800;letter-spacing:3px}
+/* jogos simples */
+.mini{flex:1;display:flex;flex-direction:column;align-items:center;gap:14px;padding:14px 16px 24px;width:100%;max-width:640px;margin:0 auto}
+.mini .turn{width:100%}
+.mini-head{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.velha{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(84vw,330px);aspect-ratio:1}
+.velha button{border:0;border-radius:14px;background:rgba(0,0,0,.28);box-shadow:inset 0 0 0 1px var(--line);font-size:clamp(2.4rem,13vw,4rem);font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.velha button:disabled{cursor:default}
+.velha button.x{color:var(--accent)}.velha button.o{color:#7cc4ff}
+.velha button.win{background:rgba(232,193,90,.25);box-shadow:inset 0 0 0 2px var(--accent)}
+.velha button:not(:disabled):hover{background:rgba(255,255,255,.08)}
+.l4{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;width:min(94vw,470px);aspect-ratio:7/6;padding:8px;border-radius:14px;background:#1d3f8f;box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 -4px 0 rgba(0,0,0,.25)}
+.l4 button{border:0;padding:0;border-radius:50%;background:#0b2a26;box-shadow:inset 0 3px 6px rgba(0,0,0,.6);cursor:pointer;aspect-ratio:1}
+.l4 button:disabled{cursor:default}
+.l4 button.p1{background:radial-gradient(circle at 35% 30%,#fff3b0,var(--accent) 55%,#b8902a)}
+.l4 button.p2{background:radial-gradient(circle at 35% 30%,#ffb3a8,#e53935 55%,#a12320)}
+.l4 button.win{outline:3px solid #fff;outline-offset:-3px}
+.l4 button.last{animation:drop .35s ease-out}
+.l4.can button.col-hover{filter:brightness(1.35)}
+.chip{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;margin:0 3px}
+.chip.p1{background:var(--accent)}.chip.p2{background:#e53935}
+.forca-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+.forca-svg{width:min(60vw,220px);height:auto}
+.forca-svg .g{stroke:#cbbf9a;stroke-width:5;stroke-linecap:round;fill:none}
+.forca-svg .b{stroke:var(--ink);stroke-width:4;stroke-linecap:round;fill:none}
+.word{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 18px;font-family:ui-monospace,monospace}
+.word .w>span{width:clamp(24px,7vw,34px);height:clamp(34px,9vw,44px);border-bottom:3px solid var(--ink);display:flex;align-items:flex-end;justify-content:center;font-size:clamp(1.2rem,5vw,1.7rem);font-weight:800;padding-bottom:2px}
+.word .w>span.miss{color:var(--danger)}
+.hint{color:var(--muted);font-size:.9rem}
+.keys{display:grid;grid-template-columns:repeat(9,1fr);gap:5px;width:min(96vw,460px)}
+.keys button{padding:9px 0;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.1);font-weight:800;cursor:pointer}
+.keys button:disabled{cursor:default}
+.keys button.ok{background:rgba(91,227,125,.25);border-color:#5be37d;color:#c9ffd6}
+.keys button.bad{background:rgba(255,155,138,.12);color:rgba(255,155,138,.6);border-color:transparent}
+.forca-form{display:flex;flex-direction:column;gap:10px;width:min(100%,360px)}
+.forca-form input{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:12px;font-size:1rem;text-align:center}
+.lives{font-size:.85rem;color:var(--muted)}
+.series-bar{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;padding:6px 10px;font-size:.85rem;background:rgba(0,0,0,.18);border-bottom:1px solid var(--line);color:var(--muted)}
+.series-bar b{color:var(--accent)}
+.series-bar .champ{color:var(--accent);font-weight:800}
+.sb-link{background:none;border:0;color:var(--ink);text-decoration:underline;cursor:pointer;padding:2px 4px;font-size:.85rem}
+.sb-opt{background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:14px;padding:3px 10px;cursor:pointer;font-size:.82rem;font-weight:600}
+.sb-opt.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.word .w{display:inline-flex;gap:6px}
+.score{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.chat-btn,.btn-exit{white-space:nowrap}
+@media (max-width:480px){
+  .topbar{gap:8px;padding-left:10px;padding-right:10px}
+  #game:not([data-scr="menu"]) .brand{display:none}
+  .chat-btn .lbl{display:none}
+  .score{font-size:.9rem}
+}
 .table{flex:1;min-width:0;display:flex;flex-direction:column;max-width:1100px;margin:0 auto;padding:10px 12px calc(12px + env(safe-area-inset-bottom));gap:10px;width:100%}
 .opponent{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .who{display:flex;align-items:center;gap:7px;font-weight:600;white-space:nowrap}
@@ -56,7 +123,7 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .turn{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:8px 12px;border-radius:10px;background:rgba(0,0,0,.25);text-align:center}
 .turn.mine{background:rgba(232,193,90,.16);box-shadow:inset 0 0 0 1px rgba(232,193,90,.5)}.turn.mine strong{color:var(--accent)}
 .row{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
-.toast{margin:0;text-align:center;color:var(--danger);font-size:.9rem;background:rgba(0,0,0,.35);padding:6px 10px;border-radius:8px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:40;margin:0;text-align:center;color:#2a0600;font-weight:600;font-size:.9rem;background:var(--danger);padding:8px 14px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:90vw}
 .hand{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:8px 4px 2px;--u:clamp(24px,6.6vw,36px)}
 
 /* peça */
@@ -88,6 +155,7 @@ button.tile{cursor:pointer;transition:transform .15s,box-shadow .15s}button.tile
 @media (max-width:899px){.chat{position:fixed;inset:0;z-index:20;width:auto;border:0;background:var(--felt-3)}}
 @media (min-width:900px){.chat-close{display:none}}
 
+.overlay .panel{background:#062019}
 .overlay{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,14,10,.6)}
 .reveal{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin:8px 0 18px;--u:18px}
 .name-input{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:12px;font-size:1rem;text-align:center;margin-bottom:12px}
@@ -105,13 +173,14 @@ button.tile{cursor:pointer;transition:transform .15s,box-shadow .15s}button.tile
 <main id="home" class="screen" hidden>
   <div class="hero" id="hero"></div>
   <h1>Dominó Online</h1>
-  <p class="lead">Gere um link, mande para seu amigo e joguem pelo navegador.</p>
+  <p class="lead">Gere um link, mande para seu amigo e joguem juntos: dominó, jogo da velha, ligue 4 e forca.</p>
   <div class="panel">
     <input class="name-input" id="host-name" maxlength="20" placeholder="Seu nome" autocomplete="nickname" />
     <button class="btn primary big" id="btn-new">Gerar link de convite</button>
+    <button class="btn big" id="btn-solo" style="margin-top:10px">🤖 Jogar sozinho contra o <span style="white-space:nowrap">Bot-Kelvin</span></button>
     <button class="link" id="btn-continue" hidden>Continuar a partida anterior</button>
   </div>
-  <p class="muted small" style="opacity:.6;margin-top:18px">versão 3</p>
+  <p class="muted small" style="opacity:.6;margin-top:18px">versão 6</p>
 </main>
 
 <!-- Aguardando amigo (quem criou) -->
@@ -149,15 +218,44 @@ button.tile{cursor:pointer;transition:transform .15s,box-shadow .15s}button.tile
 <!-- Partida -->
 <div id="game" hidden>
   <header class="topbar">
-    <span class="brand">Dominó</span>
+    <span class="brand" id="brand">Dominó</span>
     <span class="score" id="score"></span>
-    <button class="chat-btn" id="btn-chat">💬 Chat<span class="badge" id="badge" hidden></span></button>
+    <div class="top-actions"><button class="btn-exit" id="btn-exit" hidden>Sair</button><button class="chat-btn" id="btn-chat" aria-label="Chat">💬<span class="lbl"> Chat</span><span class="badge" id="badge" hidden></span></button></div>
   </header>
   <div class="banner" id="conn-banner" hidden></div>
+  <div class="series-bar" id="series-bar" hidden></div>
   <div class="body">
-    <main class="table">
+   <div class="area">
+    <main class="menu" id="t-menu">
+      <div class="who"><span class="dot opp-dot"></span><span class="opp-name">Amigo</span><span class="muted small opp-status"></span></div>
+      <h2>Escolha o jogo</h2>
+      <p class="muted small" style="margin:-6px 0 4px">Qualquer um dos dois pode escolher. Os dois entram juntos.</p>
+      <div class="cards" id="cards"></div>
+    </main>
+
+    <main class="mini" id="t-velha" hidden>
+      <div class="mini-head"><div class="who"><span class="dot opp-dot"></span><span class="opp-name">Amigo</span><span class="muted small opp-status"></span></div><span class="muted small" id="velha-me"></span></div>
+      <div class="turn" id="velha-turn"></div>
+      <div class="velha" id="velha-board"></div>
+      <div class="row" id="velha-after"></div>
+    </main>
+
+    <main class="mini" id="t-ligue4" hidden>
+      <div class="mini-head"><div class="who"><span class="dot opp-dot"></span><span class="opp-name">Amigo</span><span class="muted small opp-status"></span></div><span class="muted small" id="l4-me"></span></div>
+      <div class="turn" id="l4-turn"></div>
+      <div class="l4" id="l4-board"></div>
+      <div class="row" id="l4-after"></div>
+    </main>
+
+    <main class="mini" id="t-forca" hidden>
+      <div class="mini-head"><div class="who"><span class="dot opp-dot"></span><span class="opp-name">Amigo</span><span class="muted small opp-status"></span></div><span class="muted small" id="forca-me"></span></div>
+      <div class="turn" id="forca-turn"></div>
+      <div class="forca-wrap" id="forca-body"></div>
+    </main>
+
+    <main class="table" id="t-domino" hidden>
       <section class="opponent">
-        <div class="who"><span class="dot" id="opp-dot"></span><span id="opp-name">Amigo</span><span class="muted small" id="opp-status"></span></div>
+        <div class="who"><span class="dot opp-dot"></span><span class="opp-name">Amigo</span><span class="muted small opp-status"></span></div>
         <div class="opp-hand" id="opp-hand"></div>
       </section>
       <section class="felt">
@@ -168,10 +266,10 @@ button.tile{cursor:pointer;transition:transform .15s,box-shadow .15s}button.tile
         <div class="turn" id="turn"></div>
         <div class="row" id="choose" hidden></div>
         <div class="row" id="actions"></div>
-        <p class="toast" id="toast" hidden></p>
         <div class="hand" id="hand"></div>
       </section>
     </main>
+   </div>
     <aside class="chat" id="chat" hidden>
       <div class="chat-head"><span>Chat</span><button class="chat-close" id="chat-close" aria-label="Fechar chat">×</button></div>
       <div class="msgs" id="msgs"><p class="chat-empty" id="chat-empty">Nenhuma mensagem ainda.</p></div>
@@ -184,9 +282,11 @@ button.tile{cursor:pointer;transition:transform .15s,box-shadow .15s}button.tile
   </div>
   <div class="overlay" id="result" hidden>
     <div class="panel"><h2 id="result-title"></h2><p id="result-text"></p>
-      <p class="muted small" id="result-pips"></p><div class="reveal" id="result-reveal"></div>
-      <button class="btn primary big" id="btn-next">Próxima rodada</button></div>
+      <p class="muted small" id="result-pips"></p><p class="small" id="result-series" style="color:var(--accent);font-weight:700"></p><div class="reveal" id="result-reveal"></div>
+      <button class="btn primary big" id="btn-next" data-next="1">Próxima rodada</button>
+      <button class="link" data-exit="1">Sair para o menu</button></div>
   </div>
+  <p class="toast" id="toast" hidden></p>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"></script>
@@ -315,13 +415,126 @@ const Domino = (() => {
 })();
 
 /* =====================================================================
+   JOGO DA VELHA, LIGUE 4 E FORCA
+   ===================================================================== */
+const GameError = Domino.GameError;
+const otherSeat = (s) => (s === 1 ? 2 : 1);
+const newScores = () => ({ 1: 0, 2: 0, draws: 0 });
+
+const Velha = (() => {
+  const LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  function create(scores = newScores(), starter = 1, round = 1) {
+    return { board: Array(9).fill(0), turn: starter, starter, round, status: 'playing', winner: null, line: null, scores: { ...scores } };
+  }
+  function move(prev, seat, cell) {
+    if (prev.status !== 'playing') throw new GameError('A partida já terminou.');
+    if (prev.turn !== seat) throw new GameError('Não é a sua vez.');
+    if (!Number.isInteger(cell) || cell < 0 || cell > 8 || prev.board[cell]) throw new GameError('Escolha uma casa vazia.');
+    const s = structuredClone(prev);
+    s.board[cell] = seat; s.last = cell;
+    const line = LINES.find((l) => l.every((i) => s.board[i] === seat));
+    if (line) { s.status = 'finished'; s.winner = seat; s.line = line; s.scores[seat]++; s.turn = null; }
+    else if (s.board.every(Boolean)) { s.status = 'finished'; s.scores.draws++; s.turn = null; }
+    else s.turn = otherSeat(seat);
+    return s;
+  }
+  const next = (s) => create(s.scores, otherSeat(s.starter), s.round + 1);
+  return { create, move, next };
+})();
+
+const Ligue4 = (() => {
+  const C = 7, R = 6;
+  function create(scores = newScores(), starter = 1, round = 1) {
+    return { grid: Array(C * R).fill(0), turn: starter, starter, round, status: 'playing', winner: null, line: null, last: null, scores: { ...scores } };
+  }
+  function lineFrom(g, r, c, seat) {
+    for (const [dr, dc] of [[0,1],[1,0],[1,1],[1,-1]]) {
+      const cells = [[r, c]];
+      for (const k of [1, -1]) {
+        let rr = r + dr * k, cc = c + dc * k;
+        while (rr >= 0 && rr < R && cc >= 0 && cc < C && g[rr * C + cc] === seat) { cells.push([rr, cc]); rr += dr * k; cc += dc * k; }
+      }
+      if (cells.length >= 4) return cells.map(([a, b]) => a * C + b);
+    }
+    return null;
+  }
+  function drop(prev, seat, col) {
+    if (prev.status !== 'playing') throw new GameError('A partida já terminou.');
+    if (prev.turn !== seat) throw new GameError('Não é a sua vez.');
+    if (!Number.isInteger(col) || col < 0 || col >= C) throw new GameError('Coluna inválida.');
+    let r = R - 1; while (r >= 0 && prev.grid[r * C + col]) r--;
+    if (r < 0) throw new GameError('Essa coluna está cheia.');
+    const s = structuredClone(prev);
+    s.grid[r * C + col] = seat; s.last = r * C + col;
+    const line = lineFrom(s.grid, r, col, seat);
+    if (line) { s.status = 'finished'; s.winner = seat; s.line = line; s.scores[seat]++; s.turn = null; }
+    else if (s.grid.every(Boolean)) { s.status = 'finished'; s.scores.draws++; s.turn = null; }
+    else s.turn = otherSeat(seat);
+    return s;
+  }
+  const next = (s) => create(s.scores, otherSeat(s.starter), s.round + 1);
+  return { C, R, create, drop, next };
+})();
+
+const Forca = (() => {
+  const MAX = 6;
+  const norm = (ch) => ch.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase();
+  const isLetter = (ch) => /^[A-Z]$/.test(norm(ch));
+  function create(scores = newScores(), setter = 1, round = 1) {
+    return { setter, round, status: 'choosing', word: null, hint: '', guessed: [], wrong: 0, winner: null, scores: { ...scores } };
+  }
+  function setWord(prev, seat, word, hint) {
+    if (prev.status !== 'choosing') throw new GameError('A palavra já foi escolhida.');
+    if (seat !== prev.setter) throw new GameError('Quem escolhe a palavra agora é o outro jogador.');
+    const w = String(word || '').toUpperCase().replace(/\s+/g, ' ').trim();
+    if (w.length > 24 || !/^[\p{L} -]+$/u.test(w)) throw new GameError('Use só letras (até 24), espaço ou hífen.');
+    if ([...w].filter(isLetter).length < 2) throw new GameError('A palavra precisa ter pelo menos 2 letras.');
+    const s = structuredClone(prev);
+    s.word = w; s.hint = String(hint || '').replace(/\s+/g, ' ').trim().slice(0, 40); s.status = 'guessing';
+    return s;
+  }
+  const solved = (s) => [...s.word].every((ch) => !isLetter(ch) || s.guessed.includes(norm(ch)));
+  function guess(prev, seat, letter) {
+    if (prev.status !== 'guessing') throw new GameError('Agora não dá para chutar letra.');
+    if (seat === prev.setter) throw new GameError('Você escolheu a palavra; quem adivinha é o outro.');
+    const L = norm(String(letter || '')).slice(0, 1);
+    if (!/^[A-Z]$/.test(L)) throw new GameError('Letra inválida.');
+    if (prev.guessed.includes(L)) throw new GameError('Essa letra já foi.');
+    const s = structuredClone(prev);
+    s.guessed.push(L);
+    if (![...s.word].some((ch) => norm(ch) === L)) s.wrong++;
+    const guesser = otherSeat(s.setter);
+    if (solved(s)) { s.status = 'finished'; s.winner = guesser; s.scores[guesser]++; }
+    else if (s.wrong >= MAX) { s.status = 'finished'; s.winner = s.setter; s.scores[s.setter]++; }
+    return s;
+  }
+  const next = (s) => create(s.scores, otherSeat(s.setter), s.round + 1);
+  /** Quem adivinha não recebe a palavra antes do fim. */
+  function view(s, seat) {
+    const show = seat === s.setter || s.status === 'finished';
+    const masked = s.word ? [...s.word].map((ch) => (!isLetter(ch) ? ch : s.guessed.includes(norm(ch)) ? ch : '')) : [];
+    return { setter: s.setter, round: s.round, status: s.status, hint: s.hint, guessed: s.guessed, wrong: s.wrong, max: MAX,
+      winner: s.winner, scores: s.scores, masked, word: show ? s.word : null, letters: s.word ? [...s.word].map(isLetter) : [] };
+  }
+  return { MAX, create, setWord, guess, next, view, norm };
+})();
+
+const GAMES = {
+  domino: { title: 'Dominó', desc: 'O clássico, com compra' },
+  velha:  { title: 'Jogo da Velha', desc: 'Rápido: 3 em linha' },
+  ligue4: { title: 'Ligue 4', desc: 'Alinhe 4 fichas' },
+  forca:  { title: 'Forca', desc: 'Um escolhe, o outro adivinha' },
+};
+
+/* =====================================================================
    CONEXÃO ENTRE OS DOIS NAVEGADORES (WebRTC via PeerJS)
    Quem cria o link é o "anfitrião": guarda o baralho e valida as jogadas.
    O amigo recebe apenas a própria mão e o estado público da mesa.
    ===================================================================== */
 const PEER_OPTS = Object.assign({ debug: 0 }, window.PEER_OPTS || {});
 const PREFIX = 'domino-br-';
-const LS = { host: 'domino:host', game: 'domino:game', guest: 'domino:guest-token', name: 'domino:name' };
+const LS = { host: 'domino:host', game: 'domino:game', guest: 'domino:guest-token', name: 'domino:name', solo: 'domino:solo' };
+const BOT_NAME = 'Bot-Kelvin';
 const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const cleanName = (n, fallback) => String(n || '').replace(/\s+/g, ' ').trim().slice(0, 20) || fallback;
 const $ = (sel) => document.getElementById(sel);
@@ -346,7 +559,10 @@ const app = {
   unread: 0,
   chatOpen: false,
   names: { 1: 'Anfitrião', 2: 'Amigo' },
+  S: null,             // sessão no anfitrião: tela atual + estado de cada jogo
+  G: null,             // visão da sessão para este jogador
 };
+const newSession = () => ({ screen: 'menu', velha: null, ligue4: null, forca: null, series: {} });
 const nameOf = (seat) => app.names[seat] || (seat === 1 ? 'Anfitrião' : 'Amigo');
 
 function show(screen) {
@@ -362,20 +578,25 @@ function inviteLink(code) { return `${location.origin}${location.pathname}?jogo=
 /* ---------- Anfitrião ---------- */
 function startHost(code, resume) {
   app.role = 'host'; app.mySeat = 1;
+  clearTimeout(app.botTimer);
+  app.names = { 1: 'Anfitrião', 2: 'Amigo' };
   const saved = resume ? store.get(LS.game) : null;
   if (saved && saved.code === code) {
     app.full = saved.full; app.chat = saved.chat || []; app.guestToken = saved.guestToken;
     if (saved.names) app.names = saved.names;
-  } else { app.full = null; app.chat = []; app.guestToken = null; }
+    app.S = Object.assign(newSession(), saved.S || {});
+    app.S.series = app.S.series || {};
+  } else { app.full = null; app.chat = []; app.guestToken = null; app.S = newSession(); }
   app.names[1] = cleanName(store.get(LS.name), app.names[1] || 'Anfitrião');
   store.set(LS.host, code);
   history.replaceState(null, '', `?jogo=${code}`);
   $('invite').value = inviteLink(code);
-  if (app.full) enterGame(); else show('wait');
+  if (app.guestToken) enterGame(); else show('wait');
   openHostPeer(code, 0);
 }
 function saveHost() {
-  store.set(LS.game, { code: store.get(LS.host), full: app.full, chat: app.chat.slice(-100), guestToken: app.guestToken, names: app.names });
+  if (app.role === 'solo') { store.set(LS.solo, { full: app.full, S: app.S }); return; }
+  store.set(LS.game, { code: store.get(LS.host), full: app.full, chat: app.chat.slice(-100), guestToken: app.guestToken, names: app.names, S: app.S });
 }
 function openHostPeer(code, attempt) {
   const peer = new Peer(PREFIX + code, PEER_OPTS);
@@ -403,7 +624,6 @@ function onHostConn(conn) {
       if (app.conn && app.conn !== conn) app.conn.close();
       app.conn = conn; app.guestToken = token; app.lastSeen = Date.now();
       app.names[2] = cleanName(msg.name, 'Amigo');
-      if (!app.full) app.full = Domino.deal();
       saveHost();
       conn.send({ t: 'chatlog', list: app.chat });
       sendState();
@@ -414,26 +634,82 @@ function onHostConn(conn) {
     app.lastSeen = Date.now();
     if (msg.t === 'ping') conn.send({ t: 'pong' });
     else if (msg.t === 'chat') addChat(2, msg.text);
-    else if (['play', 'draw', 'pass', 'next'].includes(msg.t)) hostApply(2, msg);
+    else if (ACTIONS.includes(msg.t)) hostApply(2, msg);
   });
   conn.on('close', () => { if (conn === app.conn) { app.conn = null; app.lastSeen = 0; render(); } });
 }
+const ACTIONS = ['series', 'pick', 'exit', 'play', 'draw', 'pass', 'next', 'velha', 'ligue4', 'forca-word', 'forca-guess'];
+const BESTS = [0, 3, 5, 7];
+function gameState(g) { return g === 'domino' ? app.full : app.S[g]; }
+function isFinished(g) { const st = gameState(g); return !!st && (g === 'domino' ? st.roundStatus : st.status) === 'finished'; }
+/** Conta a vitória na série quando uma partida acaba. */
+function recordSeries(g) {
+  const ser = app.S.series[g], winner = gameState(g)?.winner;
+  if (!ser || !ser.best || ser.champion || !winner) return;
+  ser.w[winner]++;
+  if (ser.w[winner] >= Math.ceil(ser.best / 2)) ser.champion = winner;
+}
 function hostApply(seat, msg) {
+  const S = app.S;
+  const wasDone = GAMES[S.screen] ? isFinished(S.screen) : false;
+  const prevEnds = app.full ? Domino.ends(app.full.board) : null;
   try {
-    if (msg.t === 'play') app.full = Domino.play(app.full, seat, String(msg.tile), msg.side === 'left' || msg.side === 'right' ? msg.side : null);
-    else if (msg.t === 'draw') app.full = Domino.draw(app.full, seat, Number(msg.index));
-    else if (msg.t === 'pass') app.full = Domino.pass(app.full, seat);
-    else if (msg.t === 'next') app.full = Domino.next(app.full);
+    const scr = S.screen;
+    const need = (g) => { if (scr !== g) throw new GameError('Esse jogo não está aberto.'); };
+    if (msg.t === 'pick') {
+      if (!GAMES[msg.game]) throw new GameError('Jogo desconhecido.');
+      S.screen = msg.game;
+      if (msg.game === 'domino' && !app.full) app.full = Domino.deal();
+      if (msg.game === 'velha' && !S.velha) S.velha = Velha.create();
+      if (msg.game === 'ligue4' && !S.ligue4) S.ligue4 = Ligue4.create();
+      if (msg.game === 'forca' && !S.forca) S.forca = Forca.create();
+    } else if (msg.t === 'series') {
+      if (!GAMES[scr]) throw new GameError('Abra um jogo para começar uma série.');
+      const best = Number(msg.best);
+      if (!BESTS.includes(best)) throw new GameError('Série inválida.');
+      S.series[scr] = { best, w: { 1: 0, 2: 0 }, champion: null };
+      const text = best ? `${nameOf(seat)} começou uma série melhor de ${best}.` : `${nameOf(seat)} voltou para partidas avulsas.`;
+      if (seat === 2) toast(text); else app.conn?.send({ t: 'notice', text });
+    } else if (msg.t === 'exit') {
+      S.screen = 'menu';
+      if (seat === 2) toast(`${nameOf(2)} voltou ao menu.`);
+      else app.conn?.send({ t: 'notice', text: `${nameOf(1)} voltou ao menu.` });
+    } else if (msg.t === 'play') { need('domino'); app.full = Domino.play(app.full, seat, String(msg.tile), msg.side === 'left' || msg.side === 'right' ? msg.side : null); }
+    else if (msg.t === 'draw') { need('domino'); app.full = Domino.draw(app.full, seat, Number(msg.index)); }
+    else if (msg.t === 'pass') { need('domino'); app.full = Domino.pass(app.full, seat); }
+    else if (msg.t === 'velha') { need('velha'); S.velha = Velha.move(S.velha, seat, Number(msg.cell)); }
+    else if (msg.t === 'ligue4') { need('ligue4'); S.ligue4 = Ligue4.drop(S.ligue4, seat, Number(msg.col)); }
+    else if (msg.t === 'forca-word') { need('forca'); S.forca = Forca.setWord(S.forca, seat, msg.word, msg.hint); }
+    else if (msg.t === 'forca-guess') { need('forca'); S.forca = Forca.guess(S.forca, seat, msg.letter); }
+    else if (msg.t === 'next') {
+      const ser = S.series[scr];
+      if (ser?.champion) { ser.w = { 1: 0, 2: 0 }; ser.champion = null; } // revanche: nova série
+      if (scr === 'domino') app.full = Domino.next(app.full);
+      else if (scr === 'velha') { if (S.velha.status !== 'finished') throw new GameError('A partida ainda não terminou.'); S.velha = Velha.next(S.velha); }
+      else if (scr === 'ligue4') { if (S.ligue4.status !== 'finished') throw new GameError('A partida ainda não terminou.'); S.ligue4 = Ligue4.next(S.ligue4); }
+      else if (scr === 'forca') { if (S.forca.status !== 'finished') throw new GameError('A rodada ainda não terminou.'); S.forca = Forca.next(S.forca); }
+    }
   } catch (err) {
     const text = err instanceof Domino.GameError ? err.message : 'Jogada inválida.';
     if (seat === 1) toast(text); else app.conn?.send({ t: 'error', text });
     if (seat === 2) sendState();
     return;
   }
-  saveHost(); sendState(); app.v = Domino.view(app.full, 1); render();
+  if (GAMES[S.screen] && !wasDone && isFinished(S.screen)) recordSeries(S.screen);
+  if (app.role === 'solo') botObserve(seat, msg, prevEnds);
+  saveHost(); sendState(); refreshHostViews(); render();
+  if (app.role === 'solo') scheduleBot();
+}
+function genView(seat) {
+  const S = app.S;
+  return { screen: S.screen, velha: S.velha, ligue4: S.ligue4, forca: S.forca ? Forca.view(S.forca, seat) : null, series: S.series };
+}
+function refreshHostViews() {
+  app.v = app.full ? Domino.view(app.full, 1) : null;
+  app.G = genView(1);
 }
 function sendState() {
-  if (app.conn && app.full) app.conn.send({ t: 'state', v: Domino.view(app.full, 2), names: app.names });
+  if (app.conn && app.S) app.conn.send({ t: 'state', v: app.full ? Domino.view(app.full, 2) : null, g: genView(2), names: app.names });
 }
 
 /* ---------- Amigo (convidado) ---------- */
@@ -459,9 +735,9 @@ function startGuest(code) {
   peer.on('disconnected', () => { if (!peer.destroyed) setTimeout(() => peer.reconnect(), 1500); });
   peer.on('error', (err) => {
     if (err.type === 'peer-unavailable') {
-      if (!app.v) info('Seu amigo não está online', 'Peça para ele deixar a página do jogo aberta. Tentando de novo…');
+      if (!app.G) info('Seu amigo não está online', 'Peça para ele deixar a página do jogo aberta. Tentando de novo…');
       setTimeout(() => connectToHost(code), 4000);
-    } else if (['network', 'server-error', 'socket-error', 'socket-closed'].includes(err.type) && !app.v) {
+    } else if (['network', 'server-error', 'socket-error', 'socket-closed'].includes(err.type) && !app.G) {
       info('Sem conexão', 'Não foi possível falar com o servidor de convites. Tentando de novo…');
     }
   });
@@ -475,10 +751,11 @@ function connectToHost(code) {
   conn.on('data', (msg) => {
     if (!msg || typeof msg !== 'object') return;
     app.lastSeen = Date.now();
-    if (msg.t === 'state') { app.v = msg.v; app.busy = false; if (msg.names) { app.names[1] = cleanName(msg.names[1], 'Anfitrião'); app.names[2] = cleanName(msg.names[2], 'Amigo'); } if ($('game').hidden) enterGame(); else render(); }
+    if (msg.t === 'state') { app.v = msg.v; app.G = msg.g; app.busy = false; if (msg.names) { app.names[1] = cleanName(msg.names[1], 'Anfitrião'); app.names[2] = cleanName(msg.names[2], 'Amigo'); } if ($('game').hidden) enterGame(); else render(); }
     else if (msg.t === 'chatlog') { app.chat = Array.isArray(msg.list) ? msg.list : []; renderChat(); }
     else if (msg.t === 'chat') pushChat(msg.msg);
     else if (msg.t === 'error') { app.busy = false; toast(msg.text); render(); }
+    else if (msg.t === 'notice') toast(msg.text);
     else if (msg.t === 'full') { app.rejected = true; info('Jogo cheio', 'Este jogo já tem dois jogadores.'); }
   });
   conn.on('close', () => {
@@ -488,11 +765,95 @@ function connectToHost(code) {
   setTimeout(() => { if (!opened) { conn.close(); } }, 10000);
 }
 
+/* =====================================================================
+   BOT-KELVIN (modo sozinho, só no dominó)
+   Ele só usa o que um jogador real enxerga: a própria mão, a mesa, quantas
+   peças você tem e quando você comprou ou passou. Não vê sua mão nem o monte.
+   ===================================================================== */
+const idOf = ([a, b]) => (a <= b ? `${a}-${b}` : `${b}-${a}`);
+/** Lembra os números que você não tinha (quando comprou ou passou). */
+function botObserve(seat, msg, prevEnds) {
+  const S = app.S;
+  S.botMem = S.botMem || { missing: [] };
+  if (msg.t === 'next' || msg.t === 'pick') { S.botMem = { missing: [] }; return; }
+  if (seat !== 1) return;
+  const miss = new Set(S.botMem.missing);
+  if ((msg.t === 'draw' || msg.t === 'pass') && prevEnds) { miss.add(prevEnds.left); miss.add(prevEnds.right); }
+  if (msg.t === 'play') { const t = Domino.parse(msg.tile); if (t) { miss.delete(t[0]); miss.delete(t[1]); } }
+  S.botMem.missing = [...miss];
+}
+function botDecide(s, mem) {
+  const hand = s.hands[2], board = s.board;
+  const moves = Domino.playable(hand, board, s.requiredTile);
+  if (!moves.length) {
+    return s.boneyard.length ? { t: 'draw', index: Math.floor(Math.random() * s.boneyard.length) } : { t: 'pass' };
+  }
+  const opts = [];
+  for (const t of moves) for (const side of Domino.distinctPlacements(t, board)) opts.push({ tile: t, side });
+  const missing = new Set(mem?.missing || []);
+  let best = null;
+  for (const o of opts) {
+    const [a, b] = Domino.parse(o.tile);
+    const rest = hand.filter((x) => x !== o.tile);
+    if (!rest.length) return { t: 'play', ...o };                    // bate na hora
+    const e = board.length ? Domino.endsAfter(o.tile, board, o.side) : { left: a, right: b };
+    let score = a + b;                                               // peças pesadas primeiro
+    if (a === b) score += 6;                                         // carroça cedo
+    const fits = rest.filter((x) => { const [p, q] = Domino.parse(x); return p === e.left || q === e.left || p === e.right || q === e.right; });
+    score += fits.length * 1.5;                                      // continuar tendo jogada
+    const known = new Set([...board.map(idOf), o.tile, ...rest]);
+    for (const n of new Set([e.left, e.right])) {
+      if (missing.has(n)) score += 4;                                // ponta que você não tem
+      const seen = [...known].filter((id) => { const [p, q] = Domino.parse(id); return p === n || q === n; }).length;
+      if (seen === 7) score += 3;                                    // ninguém mais tem esse número
+    }
+    // variedade: evita ficar com muitas peças de um só número
+    const counts = {};
+    for (const x of rest) for (const n of new Set(Domino.parse(x))) counts[n] = (counts[n] || 0) + 1;
+    score -= Math.max(0, Math.max(0, ...Object.values(counts)) - 3) * 1.5;
+    score += Math.random() * 0.6;                                    // um pouco de imprevisibilidade
+    if (!best || score > best.score) best = { score, o };
+  }
+  return { t: 'play', ...best.o };
+}
+function scheduleBot() {
+  clearTimeout(app.botTimer);
+  const s = app.full;
+  if (app.role !== 'solo' || !s || s.roundStatus !== 'playing' || s.turn !== 2) return;
+  const msg = botDecide(s, app.S.botMem);
+  const delay = msg.t === 'draw' ? 550 : msg.t === 'pass' ? 800 : 750 + Math.random() * 500;
+  app.botTimer = setTimeout(() => {
+    if (app.role === 'solo' && app.full?.turn === 2 && app.full.roundStatus === 'playing') hostApply(2, botDecide(app.full, app.S.botMem));
+  }, delay);
+}
+function startSolo() {
+  app.peer?.destroy(); app.peer = null; app.conn = null;
+  app.role = 'solo'; app.mySeat = 1;
+  const me = cleanName($('host-name').value || store.get(LS.name), 'Você');
+  if ($('host-name').value.trim()) store.set(LS.name, me);
+  app.names = { 1: me, 2: BOT_NAME };
+  const saved = store.get(LS.solo);
+  app.full = saved?.full || Domino.deal();
+  app.S = Object.assign(newSession(), saved?.S || {}, { screen: 'domino' });
+  app.S.series = app.S.series || {};
+  app.chat = []; app.unread = 0; renderBadge();
+  saveHost();
+  enterGame();
+  scheduleBot();
+}
+function leaveSolo() {
+  clearTimeout(app.botTimer);
+  saveHost();
+  app.role = null; app.G = null; app.v = null;
+  boot();
+}
+
 /* ---------- Ações do jogador local ---------- */
 function act(msg) {
   if (app.busy) return;
   app.pending = null;
-  if (app.role === 'host') { hostApply(1, msg); return; }
+  if (app.role === 'solo' && msg.t === 'exit') { leaveSolo(); return; }
+  if (app.role === 'host' || app.role === 'solo') { hostApply(1, msg); return; }
   if (!app.conn) { toast(`Sem conexão com ${nameOf(app.mySeat === 1 ? 2 : 1)}.`); return; }
   app.busy = true; render();
   app.conn.send(msg);
@@ -521,6 +882,7 @@ function pushChat(msg, already) {
   if (msg.from !== app.mySeat && !app.chatOpen) {
     app.unread++; renderBadge();
   }
+  if (msg.from !== app.mySeat) flashTitle(`💬 ${nameOf(msg.from)}: ${msg.text.slice(0, 30)}`);
   appendMsg(msg);
 }
 function appendMsg(msg) {
@@ -542,9 +904,19 @@ function renderChat() {
   $('chat-empty').hidden = app.chat.length > 0;
   app.chat.forEach(appendMsg);
 }
+const flash = { timer: null };
+const baseTitle = () => (app.unread ? `(${app.unread}) Dominó Online` : 'Dominó Online');
+/** Pisca o título da aba enquanto a página estiver em segundo plano. */
+function flashTitle(text) {
+  if (!document.hidden) return;
+  stopFlash();
+  let on = true; document.title = text;
+  flash.timer = setInterval(() => { on = !on; document.title = on ? text : baseTitle(); }, 1000);
+}
+function stopFlash() { clearInterval(flash.timer); flash.timer = null; document.title = baseTitle(); }
 function renderBadge() {
   $('badge').hidden = !app.unread; $('badge').textContent = app.unread;
-  document.title = app.unread ? `(${app.unread}) Dominó Online` : 'Dominó Online';
+  if (!flash.timer) document.title = baseTitle();
 }
 function setChat(open) {
   app.chatOpen = open; $('chat').hidden = !open;
@@ -630,7 +1002,7 @@ function drawBoard(v, lastTile) {
 let boardW = 0;
 new ResizeObserver(() => {
   const w = $('board').clientWidth;
-  if (w && w !== boardW && app.v && !$('game').hidden) { boardW = w; drawBoard(app.v, app.v.lastAction?.type === 'play' ? app.v.lastAction.tile : null); }
+  if (w && w !== boardW && app.v && app.G?.screen === 'domino' && !$('game').hidden) { boardW = w; drawBoard(app.v, app.v.lastAction?.type === 'play' ? app.v.lastAction.tile : null); }
 }).observe($('board'));
 
 let toastTimer;
@@ -638,22 +1010,90 @@ function toast(text) {
   $('toast').textContent = text; $('toast').hidden = false;
   clearTimeout(toastTimer); toastTimer = setTimeout(() => ($('toast').hidden = true), 4000);
 }
-function opponentOnline() { return !!app.conn && Date.now() - app.lastSeen < 15000; }
+function opponentOnline() { return app.role === 'solo' || (!!app.conn && Date.now() - app.lastSeen < 15000); }
 function renderConn() {
   const b = $('conn-banner');
   if (app.peer && app.peer.disconnected && !app.peer.destroyed) { b.textContent = 'Reconectando…'; b.hidden = false; }
   else b.hidden = true;
-  const on = opponentOnline();
-  $('opp-dot').className = 'dot' + (on ? ' on' : '');
-  $('opp-status').textContent = on ? '' : 'desconectado';
+  const on = opponentOnline(), op = nameOf(app.mySeat === 1 ? 2 : 1);
+  document.querySelectorAll('.opp-dot').forEach((e) => (e.className = 'dot opp-dot' + (on ? ' on' : '')));
+  document.querySelectorAll('.opp-status').forEach((e) => (e.textContent = on ? '' : 'desconectado'));
+  document.querySelectorAll('.opp-name').forEach((e) => (e.textContent = op));
 }
 function enterGame() {
-  if (app.role === 'host') app.v = Domino.view(app.full, 1);
-  show('game'); renderChat(); render();
-  if (innerWidth >= 900) setChat(true);
+  const solo = app.role === 'solo';
+  if (app.role !== 'guest') refreshHostViews();
+  $('btn-chat').hidden = solo;
+  document.querySelector('[data-exit]').textContent = solo ? 'Sair' : 'Sair para o menu';
+  show('game'); renderChat();
+  setChat(!solo && innerWidth >= 900);
+  render();
+}
+const SCREENS = ['menu', 'domino', 'velha', 'ligue4', 'forca'];
+function scoreLine(sc) {
+  const me = app.mySeat, op = otherSeat(me);
+  return `${esc(nameOf(me))} <b>${sc[me]}</b> <span class="muted">×</span> <b>${sc[op]}</b> ${esc(nameOf(op))}` +
+    (sc.draws ? ` <span class="muted small">· ${sc.draws} empate${sc.draws > 1 ? 's' : ''}</span>` : '');
 }
 function render() {
   renderConn();
+  const G = app.G; if (!G) return;
+  const scr = G.screen;
+  for (const k of SCREENS) $('t-' + k).hidden = k !== scr;
+  $('btn-exit').hidden = scr === 'menu';
+  $('game').dataset.scr = scr;
+  $('brand').textContent = scr === 'menu' ? 'Jogos' : GAMES[scr].title;
+  if (scr !== 'domino') $('result').hidden = true;
+  const sc = scr === 'domino' ? app.v?.scores : scr === 'menu' ? null : G[scr]?.scores;
+  $('score').innerHTML = sc ? scoreLine(sc) : '';
+  renderSeriesBar(scr);
+  const mine = isMyTurn(scr);
+  if (mine && !app.wasMyTurn) flashTitle('🔔 Sua vez!');
+  app.wasMyTurn = mine;
+  if (scr === 'menu') renderMenu();
+  else if (scr === 'domino') renderDomino();
+  else if (scr === 'velha') renderVelha();
+  else if (scr === 'ligue4') renderLigue4();
+  else if (scr === 'forca') renderForca();
+}
+function isMyTurn(scr) {
+  const me = app.mySeat, G = app.G;
+  if (scr === 'domino') return app.v?.roundStatus === 'playing' && app.v.turn === me;
+  const st = G?.[scr]; if (!st) return false;
+  if (scr === 'forca') return (st.status === 'choosing' && st.setter === me) || (st.status === 'guessing' && st.setter !== me);
+  return st.status === 'playing' && st.turn === me;
+}
+const seriesOf = (scr) => app.G?.series?.[scr] || { best: 0, w: { 1: 0, 2: 0 }, champion: null };
+function renderSeriesBar(scr) {
+  const bar = $('series-bar');
+  bar.hidden = !GAMES[scr];
+  if (bar.hidden) { app.seriesEdit = false; return; }
+  const ser = seriesOf(scr), me = app.mySeat, op = otherSeat(me);
+  if (app.seriesEdit) {
+    bar.innerHTML = '<span>Série:</span>' + BESTS.map((b) => `<button class="sb-opt${ser.best === b ? ' on' : ''}" data-best="${b}">${b ? 'Melhor de ' + b : 'Avulsa'}</button>`).join('') +
+      '<button class="sb-link" data-series-cancel="1">cancelar</button>';
+    return;
+  }
+  if (!ser.best) { bar.innerHTML = 'Partida avulsa · <button class="sb-link" data-series-edit="1">jogar uma série</button>'; return; }
+  const score = `${esc(nameOf(me))} <b>${ser.w[me]}</b> × <b>${ser.w[op]}</b> ${esc(nameOf(op))}`;
+  bar.innerHTML = ser.champion
+    ? `<span class="champ">🏆 ${ser.champion === me ? 'Você venceu' : esc(nameOf(ser.champion)) + ' venceu'} a série (${ser.w[ser.champion]}×${ser.w[otherSeat(ser.champion)]})</span>`
+    : `🏆 Melhor de ${ser.best} · ${score} · <button class="sb-link" data-series-edit="1">alterar</button>`;
+}
+/** Título do fim de partida, já considerando a série. */
+function endTitle(scr, st) {
+  const ser = seriesOf(scr), me = app.mySeat;
+  if (ser.champion) return ser.champion === me ? '🏆 Você venceu a série!' : `🏆 ${esc(nameOf(ser.champion))} venceu a série`;
+  return resultText(st);
+}
+function seriesNote(scr) {
+  const ser = seriesOf(scr), me = app.mySeat, op = otherSeat(me);
+  if (!ser.best) return '';
+  if (ser.champion) return `Série melhor de ${ser.best}: ${ser.w[me]} × ${ser.w[op]}`;
+  return `Série (melhor de ${ser.best}): você ${ser.w[me]} × ${ser.w[op]} ${esc(nameOf(op))} — vence quem chegar a ${Math.ceil(ser.best / 2)}`;
+}
+const nextLabel = (scr, normal) => (seriesOf(scr).champion ? 'Revanche (nova série)' : normal);
+function renderDomino() {
   const v = app.v; if (!v) return;
   const me = app.mySeat, op = me === 1 ? 2 : 1;
   const myTurn = v.roundStatus === 'playing' && v.turn === me;
@@ -661,9 +1101,6 @@ function render() {
   const ends = Domino.ends(v.board);
 
   const opName = esc(nameOf(op));
-  $('opp-name').textContent = nameOf(op);
-  $('score').innerHTML = `${esc(nameOf(me))} <b>${v.scores[me]}</b> <span class="muted">×</span> <b>${v.scores[op]}</b> ${opName}` +
-    (v.scores.draws ? ` <span class="muted small">· ${v.scores.draws} empate${v.scores.draws > 1 ? 's' : ''}</span>` : '');
   const n = v.counts[op];
   $('opp-hand').innerHTML = backHTML().repeat(Math.min(n, 12)) + (n > 12 ? `<span class="muted small">+${n - 12}</span>` : '');
   $('felt-info').innerHTML = `<span>Rodada ${v.round}</span><span>Monte: ${v.boneyardCount}</span>` + (ends ? `<span>Pontas: ${ends.left} · ${ends.right}</span>` : '');
@@ -712,7 +1149,10 @@ function render() {
   $('result').hidden = !done;
   if (done) {
     const tie = v.winner == null, won = v.winner === me;
-    $('result-title').textContent = tie ? 'Empate!' : won ? 'Você venceu a rodada!' : `${nameOf(op)} venceu a rodada`;
+    const champ = seriesOf('domino').champion;
+    $('result-title').innerHTML = champ ? endTitle('domino', v) : tie ? 'Empate!' : won ? 'Você venceu a rodada!' : `${esc(nameOf(op))} venceu a rodada`;
+    $('result-series').innerHTML = seriesNote('domino');
+    $('btn-next').textContent = nextLabel('domino', 'Próxima rodada');
     $('result-text').textContent = v.endReason === 'blocked'
       ? (tie ? 'Jogo trancado com a mesma contagem de pontos.' : 'Jogo trancado: vence quem tem menos pontos na mão.')
       : (won ? 'Você bateu!' : `${nameOf(op)} bateu.`);
@@ -723,7 +1163,152 @@ function render() {
   }
 }
 
+/* ---------- Menu e jogos simples ---------- */
+function renderMenu() {
+  const G = app.G;
+  const icons = {
+    domino: tileHTML(6, 6, { v: true }) + tileHTML(3, 5, { v: true }),
+    velha: '<span class="ic-velha"><span class="x">✕</span><span class="o">◯</span></span>',
+    ligue4: '<span class="ic-l4"><i style="background:var(--accent)"></i><i style="background:#e53935"></i><i style="background:var(--accent)"></i><i style="background:#e53935"></i></span>',
+    forca: '<span class="ic-forca">A_O_</span>',
+  };
+  $('cards').innerHTML = Object.entries(GAMES).map(([k, g]) => {
+    const st = k === 'domino' ? app.v : G[k];
+    const sc = st?.scores, played = sc && sc[1] + sc[2] + sc.draws > 0;
+    const going = k === 'domino' ? st?.roundStatus === 'playing' && st.board.length > 0
+      : k === 'forca' ? st && st.status !== 'finished' && (st.status === 'guessing')
+      : st && st.status === 'playing' && (st.board || st.grid).some(Boolean);
+    return `<button class="card" data-pick="${k}" ${app.busy ? 'disabled' : ''}>
+      <span class="ic">${icons[k]}</span><span class="t">${g.title}</span><span class="s">${g.desc}</span>
+      ${played ? `<span class="s">${scoreLine(sc)}</span>` : ''}${going ? '<span class="tag">partida em andamento</span>' : ''}
+    </button>`;
+  }).join('');
+}
+function turnBox(el, mine, text, sub = '') {
+  el.className = 'turn' + (mine ? ' mine' : '');
+  el.innerHTML = `<strong>${text}</strong>${sub ? `<span class="muted small">${sub}</span>` : ''}`;
+}
+function afterButtons(el, finished, scr) {
+  el.innerHTML = finished ? `<button class="btn primary" data-next="1" ${app.busy ? 'disabled' : ''}>${nextLabel(scr, 'Jogar de novo')}</button>` : '';
+}
+function resultText(st) {
+  const me = app.mySeat;
+  return st.winner == null ? 'Empate!' : st.winner === me ? 'Você venceu! 🎉' : `${esc(nameOf(st.winner))} venceu`;
+}
+function renderVelha() {
+  const st = app.G.velha; if (!st) return;
+  const me = app.mySeat, mine = st.status === 'playing' && st.turn === me;
+  const mark = (p) => (p === 1 ? '✕' : '◯');
+  $('velha-me').innerHTML = `Você joga com <b>${mark(me)}</b>`;
+  turnBox($('velha-turn'), mine, st.status === 'finished' ? endTitle('velha', st) : mine ? 'Sua vez' : `Vez de ${esc(nameOf(st.turn))}`, `Partida ${st.round}`);
+  $('velha-board').innerHTML = st.board.map((p, i) => `<button data-cell="${i}" class="${p === 1 ? 'x' : p === 2 ? 'o' : ''}${st.line?.includes(i) ? ' win' : ''}" ${!mine || p || app.busy ? 'disabled' : ''} aria-label="Casa ${i + 1}">${p ? mark(p) : ''}</button>`).join('');
+  afterButtons($('velha-after'), st.status === 'finished', 'velha');
+}
+function renderLigue4() {
+  const st = app.G.ligue4; if (!st) return;
+  const me = app.mySeat, mine = st.status === 'playing' && st.turn === me;
+  $('l4-me').innerHTML = `Sua cor: <span class="chip p${me}"></span>`;
+  turnBox($('l4-turn'), mine, st.status === 'finished' ? endTitle('ligue4', st) : mine ? 'Sua vez — toque numa coluna' : `Vez de ${esc(nameOf(st.turn))}`, `Partida ${st.round}`);
+  $('l4-board').className = 'l4' + (mine && !app.busy ? ' can' : '');
+  $('l4-board').innerHTML = st.grid.map((p, i) => `<button data-col="${i % Ligue4.C}" class="${p ? 'p' + p : ''}${st.line?.includes(i) ? ' win' : ''}${st.last === i ? ' last' : ''}" ${!mine || app.busy ? 'disabled' : ''} aria-label="Coluna ${(i % Ligue4.C) + 1}"></button>`).join('');
+  afterButtons($('l4-after'), st.status === 'finished', 'ligue4');
+}
+function hangmanSVG(wrong) {
+  const parts = [
+    '<circle class="b" cx="140" cy="62" r="16"/>',
+    '<line class="b" x1="140" y1="78" x2="140" y2="128"/>',
+    '<line class="b" x1="140" y1="92" x2="118" y2="112"/>',
+    '<line class="b" x1="140" y1="92" x2="162" y2="112"/>',
+    '<line class="b" x1="140" y1="128" x2="122" y2="158"/>',
+    '<line class="b" x1="140" y1="128" x2="158" y2="158"/>',
+  ];
+  return `<svg class="forca-svg" viewBox="0 0 200 190" aria-label="Forca com ${wrong} erros">
+    <line class="g" x1="20" y1="180" x2="120" y2="180"/><line class="g" x1="50" y1="180" x2="50" y2="20"/>
+    <line class="g" x1="50" y1="20" x2="140" y2="20"/><line class="g" x1="140" y1="20" x2="140" y2="46"/>
+    ${parts.slice(0, wrong).join('')}</svg>`;
+}
+function renderForca() {
+  const st = app.G.forca; if (!st) return;
+  const me = app.mySeat, setter = st.setter, guesser = otherSeat(setter);
+  const iSet = me === setter;
+  $('forca-me').textContent = `Rodada ${st.round}`;
+  const body = $('forca-body');
+  if (st.status === 'choosing') {
+    if (iSet) {
+      turnBox($('forca-turn'), true, 'Escolha a palavra', `${esc(nameOf(guesser))} vai tentar adivinhar`);
+      if (!body.querySelector('#forca-form')) {
+        body.innerHTML = `<form class="forca-form" id="forca-form" autocomplete="off">
+          <input id="forca-word" maxlength="24" placeholder="Palavra secreta" autocapitalize="characters" spellcheck="false" />
+          <input id="forca-hint" maxlength="40" placeholder="Dica (opcional)" />
+          <button class="btn primary big" type="submit">Começar</button></form>`;
+        $('forca-word').focus();
+      }
+    } else {
+      turnBox($('forca-turn'), false, `${esc(nameOf(setter))} está escolhendo a palavra…`);
+      body.innerHTML = hangmanSVG(0);
+    }
+    return;
+  }
+  const done = st.status === 'finished';
+  const word = st.word ? [...st.word] : null;
+  // Agrupa por palavra para uma palavra nunca quebrar no meio da linha.
+  const groups = [[]];
+  st.masked.forEach((ch, i) => {
+    if (!st.letters[i] && ch === ' ') { groups.push([]); return; }
+    let box;
+    if (!st.letters[i]) box = `<span style="border:0">${esc(ch)}</span>`;
+    else if (ch) box = `<span>${esc(ch)}</span>`;
+    else box = word ? `<span class="miss">${esc(word[i])}</span>` : '<span></span>';
+    groups[groups.length - 1].push(box);
+  });
+  const boxes = groups.filter((g) => g.length).map((g) => `<span class="w">${g.join('')}</span>`).join('');
+  const hint = st.hint ? `<p class="hint">Dica: ${esc(st.hint)}</p>` : '';
+  const lives = `<p class="lives">Erros: ${st.wrong} de ${st.max}</p>`;
+  const keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((L) => {
+    const used = st.guessed.includes(L);
+    const ok = used && st.masked.some((ch, i) => ch && st.letters[i] && Forca.norm(ch) === L);
+    return `<button data-letter="${L}" class="${used ? (ok ? 'ok' : 'bad') : ''}" ${used || iSet || done || app.busy ? 'disabled' : ''}>${L}</button>`;
+  }).join('');
+  if (done) {
+    const gWon = st.winner === guesser;
+    turnBox($('forca-turn'), false, endTitle('forca', st), gWon ? 'A palavra foi descoberta' : 'A forca completou');
+  } else if (iSet) turnBox($('forca-turn'), false, `${esc(nameOf(guesser))} está adivinhando`, 'Você escolheu a palavra');
+  else turnBox($('forca-turn'), true, 'Sua vez — escolha uma letra');
+  body.innerHTML = hangmanSVG(st.wrong) + `<div class="word">${boxes}</div>` + hint + lives +
+    (iSet && !done ? '' : `<div class="keys">${keys}</div>`) +
+    (done ? `<button class="btn primary" data-next="1" ${app.busy ? 'disabled' : ''}>${nextLabel('forca', 'Próxima rodada (trocam os papéis)')}</button>` : '');
+}
+
 /* ---------- Eventos ---------- */
+$('cards').addEventListener('click', (e) => { const c = e.target.closest('[data-pick]'); if (c && !c.disabled) act({ t: 'pick', game: c.dataset.pick }); });
+$('btn-exit').onclick = () => act({ t: 'exit' });
+$('series-bar').addEventListener('click', (e) => {
+  if (e.target.closest('[data-series-edit]')) { app.seriesEdit = true; render(); }
+  else if (e.target.closest('[data-series-cancel]')) { app.seriesEdit = false; render(); }
+  else { const b = e.target.closest('[data-best]'); if (b) { app.seriesEdit = false; act({ t: 'series', best: Number(b.dataset.best) }); } }
+});
+document.addEventListener('click', (e) => {
+  if (e.target.closest('[data-exit]')) act({ t: 'exit' });
+  else if (e.target.closest('[data-next]')) act({ t: 'next' });
+});
+$('velha-board').addEventListener('click', (e) => { const b = e.target.closest('[data-cell]'); if (b && !b.disabled) act({ t: 'velha', cell: Number(b.dataset.cell) }); });
+$('l4-board').addEventListener('click', (e) => { const b = e.target.closest('[data-col]'); if (b && !b.disabled) act({ t: 'ligue4', col: Number(b.dataset.col) }); });
+$('l4-board').addEventListener('pointerover', (e) => {
+  const b = e.target.closest('[data-col]');
+  $('l4-board').querySelectorAll('.col-hover').forEach((x) => x.classList.remove('col-hover'));
+  if (b) $('l4-board').querySelectorAll(`[data-col="${b.dataset.col}"]`).forEach((x) => x.classList.add('col-hover'));
+});
+$('forca-body').addEventListener('click', (e) => { const b = e.target.closest('[data-letter]'); if (b && !b.disabled) act({ t: 'forca-guess', letter: b.dataset.letter }); });
+$('forca-body').addEventListener('submit', (e) => {
+  e.preventDefault();
+  act({ t: 'forca-word', word: $('forca-word').value, hint: $('forca-hint').value });
+});
+document.addEventListener('keydown', (e) => {
+  if (app.G?.screen !== 'forca' || e.target.tagName === 'INPUT' || e.ctrlKey || e.metaKey || e.altKey) return;
+  const L = Forca.norm(e.key); if (!/^[A-Z]$/.test(L)) return;
+  const b = $('forca-body').querySelector(`[data-letter="${L}"]`); if (b && !b.disabled) act({ t: 'forca-guess', letter: L });
+});
+
 $('hand').addEventListener('click', (e) => {
   const btn = e.target.closest('[data-tile]'); if (!btn || btn.disabled) return;
   const t = btn.dataset.tile, sides = Domino.distinctPlacements(t, app.v.board);
@@ -737,7 +1322,7 @@ $('actions').addEventListener('click', (e) => {
   const d = e.target.closest('[data-draw]'); if (d && !d.disabled) { act({ t: 'draw', index: Number(d.dataset.draw) }); return; }
   const b = e.target.closest('[data-act]'); if (b) act({ t: b.dataset.act });
 });
-$('btn-next').onclick = () => act({ t: 'next' });
+
 $('btn-chat').onclick = () => setChat(!app.chatOpen);
 $('chat-close').onclick = () => setChat(false);
 $('chat-form').onsubmit = (e) => { e.preventDefault(); sendChat($('chat-input').value); $('chat-input').value = ''; };
@@ -754,17 +1339,21 @@ if (navigator.share) {
 }
 $('btn-back').onclick = () => { app.peer?.destroy(); history.replaceState(null, '', location.pathname); boot(); };
 $('btn-new').onclick = () => {
+  clearTimeout(app.botTimer);
   store.set(LS.name, cleanName($('host-name').value, 'Anfitrião'));
   app.peer?.destroy(); store.del(LS.game); app.names = { 1: '', 2: 'Amigo' }; startHost(randomId(), false);
 };
 $('btn-continue').onclick = () => startHost(store.get(LS.host), true);
+$('btn-solo').onclick = startSolo;
 
 // Sinal de vida: detecta quando o amigo fecha a página ou perde a conexão.
 setInterval(() => {
   if (app.conn) { try { app.conn.send({ t: 'ping' }); } catch { /* conexão caindo */ } }
   if (!$('game').hidden) renderConn();
 }, 5000);
+window.addEventListener('focus', stopFlash);
 document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) stopFlash();
   if (document.visibilityState === 'visible' && app.peer?.disconnected && !app.peer.destroyed) app.peer.reconnect();
 });
 
