@@ -45,8 +45,11 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .opp-hand{display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end;--u:clamp(10px,2.6vw,14px)}
 .felt{flex:1;min-height:150px;display:flex;flex-direction:column;border-radius:18px;background:radial-gradient(ellipse at center,rgba(255,255,255,.05),rgba(0,0,0,.18));box-shadow:inset 0 0 0 1px var(--line),inset 0 10px 40px rgba(0,0,0,.35);overflow:hidden}
 .felt-info{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:8px 10px 0;font-size:.8rem;color:var(--muted)}
-.board{flex:1;overflow:auto;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;align-items:center;gap:3px;padding:14px;--u:clamp(17px,3.4vw,30px)}
-.board.empty{color:var(--muted)}
+.board{flex:1;min-height:0;overflow:auto;position:relative}
+.board-inner{position:relative;width:100%}
+.board.empty{display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.board .tile{position:absolute}
+.board .tile .half{width:auto;height:auto;flex:1 1 0;min-width:0;min-height:0}
 .board .tile.end{box-shadow:0 0 0 2px var(--accent),0 2px 4px rgba(0,0,0,.45)}
 .board .tile.last{animation:drop .35s ease-out}@keyframes drop{from{transform:scale(1.25);opacity:0}}
 .me{display:flex;flex-direction:column;gap:8px}
@@ -61,7 +64,8 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .tile.v{flex-direction:column}
 .half{width:var(--u);height:var(--u);display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:calc(var(--u)*.13)}
 .tile.v .half+.half{border-top:var(--e) solid #b9b19a}.tile:not(.v) .half+.half{border-left:var(--e) solid #b9b19a}
-.pip{width:76%;height:76%;place-self:center;border-radius:50%;background:radial-gradient(circle at 35% 30%,#4a4a4a,#1b1b1b 60%)}
+.pip{width:76%;height:76%;place-self:center;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.45),transparent 55%),var(--pc,#1b1b1b)}
+.c1{--pc:#1e88e5}.c2{--pc:#2e7d32}.c3{--pc:#d32f2f}.c4{--pc:#6d4c41}.c5{--pc:#e08a00}.c6{--pc:#7b1fa2}
 .tile.back{background:linear-gradient(160deg,#fbf8ef,#e3dcc6)}
 button.tile{cursor:pointer;transition:transform .15s,box-shadow .15s}button.tile:disabled{cursor:default}
 .hand .tile.playable{transform:translateY(-6px);box-shadow:0 0 0 2px var(--accent),0 8px 16px rgba(0,0,0,.45)}
@@ -76,8 +80,9 @@ button.tile{cursor:pointer;transition:transform .15s,box-shadow .15s}button.tile
 .msg{max-width:85%;padding:7px 11px;border-radius:14px;background:rgba(255,255,255,.1);align-self:flex-start;word-wrap:break-word;white-space:pre-wrap;line-height:1.3}
 .msg.mine{align-self:flex-end;background:var(--accent);color:var(--accent-ink)}
 .msg time{display:block;font-size:.68rem;opacity:.6;margin-top:2px}
+.msg .from{display:block;font-size:.72rem;font-weight:700;opacity:.75;margin-bottom:1px}
 .chat-empty{color:var(--muted);text-align:center;margin:auto;font-size:.9rem}
-.quick{display:flex;gap:6px;overflow-x:auto;padding:8px 12px 0}
+.quick{display:flex;gap:6px;overflow-x:auto;padding:8px 12px 0;scrollbar-width:none}.quick::-webkit-scrollbar{display:none}
 .quick button{white-space:nowrap;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:16px;padding:5px 10px;font-size:.82rem;cursor:pointer}
 .chat-form{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
 @media (max-width:899px){.chat{position:fixed;inset:0;z-index:20;width:auto;border:0;background:var(--felt-3)}}
@@ -85,6 +90,11 @@ button.tile{cursor:pointer;transition:transform .15s,box-shadow .15s}button.tile
 
 .overlay{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,14,10,.6)}
 .reveal{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin:8px 0 18px;--u:18px}
+.name-input{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:12px;font-size:1rem;text-align:center;margin-bottom:12px}
+.monte{display:flex;flex-direction:column;align-items:center;gap:6px}
+.monte-tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;--u:clamp(16px,4.2vw,22px)}
+.monte-tiles .tile{cursor:pointer;transition:transform .12s}.monte-tiles .tile:hover:not(:disabled){transform:translateY(-4px);box-shadow:0 0 0 2px var(--accent),0 6px 12px rgba(0,0,0,.45)}
+.monte-tiles .tile:disabled{opacity:.5;cursor:default}
 .banner{background:rgba(232,193,90,.15);color:var(--accent);text-align:center;padding:6px;font-size:.85rem}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -97,9 +107,11 @@ button.tile{cursor:pointer;transition:transform .15s,box-shadow .15s}button.tile
   <h1>Dominó Online</h1>
   <p class="lead">Gere um link, mande para seu amigo e joguem pelo navegador.</p>
   <div class="panel">
+    <input class="name-input" id="host-name" maxlength="20" placeholder="Seu nome" autocomplete="nickname" />
     <button class="btn primary big" id="btn-new">Gerar link de convite</button>
     <button class="link" id="btn-continue" hidden>Continuar a partida anterior</button>
   </div>
+  <p class="muted small" style="opacity:.6;margin-top:18px">versão 3</p>
 </main>
 
 <!-- Aguardando amigo (quem criou) -->
@@ -114,6 +126,18 @@ button.tile{cursor:pointer;transition:transform .15s,box-shadow .15s}button.tile
     <p class="waiting-msg"><span class="dot pulse"></span><span id="wait-msg">Aguardando seu amigo…</span></p>
   </div>
   <button class="link" id="btn-back">Voltar</button>
+</main>
+
+<!-- Amigo informando o nome -->
+<main id="join" class="screen" hidden>
+  <div class="panel">
+    <h2>Você foi convidado para um dominó</h2>
+    <p class="muted">Como quer ser chamado?</p>
+    <form id="join-form" autocomplete="off">
+      <input class="name-input" id="guest-name" maxlength="20" placeholder="Seu nome" autocomplete="nickname" />
+      <button class="btn primary big" type="submit">Entrar no jogo</button>
+    </form>
+  </div>
 </main>
 
 <!-- Mensagens (conectando / erro) -->
@@ -133,7 +157,7 @@ button.tile{cursor:pointer;transition:transform .15s,box-shadow .15s}button.tile
   <div class="body">
     <main class="table">
       <section class="opponent">
-        <div class="who"><span class="dot" id="opp-dot"></span><span>Amigo</span><span class="muted small" id="opp-status"></span></div>
+        <div class="who"><span class="dot" id="opp-dot"></span><span id="opp-name">Amigo</span><span class="muted small" id="opp-status"></span></div>
         <div class="opp-hand" id="opp-hand"></div>
       </section>
       <section class="felt">
@@ -216,7 +240,7 @@ const Domino = (() => {
     let turn = first, requiredTile = null;
     if (!turn) { const s = starter(hands); turn = s.seat; requiredTile = s.tile; }
     return { round, board: [], hands, boneyard: d.slice(14), turn, requiredTile, roundStatus: 'playing',
-      winner: null, endReason: null, scores: { ...scores }, lastAction: null, revealed: null, pipTotals: null };
+      winner: null, endReason: null, scores: { ...scores }, lastAction: null, revealed: null, pipTotals: null, origin: 0 };
   }
   function check(s, seat) {
     if (s.roundStatus !== 'playing') throw new GameError('A rodada já terminou.');
@@ -247,7 +271,9 @@ const Domino = (() => {
     else if (!ch) { const d = distinctPlacements(t, s.board); if (d.length > 1) throw new GameError('Escolha a ponta.'); ch = d[0]; }
     else if (!sides.includes(ch)) throw new GameError('Essa peça não encaixa nessa ponta.');
     const o = orient(t, s.board, ch);
+    const wasEmpty = !s.board.length;
     if (ch === 'left') s.board.unshift(o); else s.board.push(o);
+    if (ch === 'left' && !wasEmpty) s.origin = (s.origin || 0) + 1;
     s.hands[seat] = hand.filter((x) => x !== t);
     s.requiredTile = null;
     s.lastAction = { seat, type: 'play', tile: t };
@@ -255,12 +281,13 @@ const Domino = (() => {
     s.turn = other(seat);
     return resolveBlocked(s);
   }
-  function draw(prev, seat) {
+  function draw(prev, seat, index = 0) {
     check(prev, seat);
     if (playable(prev.hands[seat], prev.board, prev.requiredTile).length) throw new GameError('Você tem peça para jogar.');
     if (!prev.boneyard.length) throw new GameError('O monte está vazio. Passe a vez.');
     const s = structuredClone(prev);
-    s.hands[seat].push(s.boneyard.shift());
+    const i = Number.isInteger(index) && index >= 0 && index < s.boneyard.length ? index : 0;
+    s.hands[seat].push(s.boneyard.splice(i, 1)[0]);
     s.lastAction = { seat, type: 'draw' };
     return s;
   }
@@ -279,7 +306,7 @@ const Domino = (() => {
   }
   /** Visão de um jogador: sem a mão do adversário nem o monte. */
   function view(s, seat) {
-    return { round: s.round, board: s.board, turn: s.turn, requiredTile: s.requiredTile, roundStatus: s.roundStatus,
+    return { round: s.round, board: s.board, origin: s.origin || 0, turn: s.turn, requiredTile: s.requiredTile, roundStatus: s.roundStatus,
       winner: s.winner, endReason: s.endReason, scores: s.scores, lastAction: s.lastAction,
       counts: { 1: s.hands[1].length, 2: s.hands[2].length }, boneyardCount: s.boneyard.length,
       revealed: s.revealed, pipTotals: s.pipTotals, hand: s.hands[seat].slice() };
@@ -294,7 +321,9 @@ const Domino = (() => {
    ===================================================================== */
 const PEER_OPTS = Object.assign({ debug: 0 }, window.PEER_OPTS || {});
 const PREFIX = 'domino-br-';
-const LS = { host: 'domino:host', game: 'domino:game', guest: 'domino:guest-token' };
+const LS = { host: 'domino:host', game: 'domino:game', guest: 'domino:guest-token', name: 'domino:name' };
+const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const cleanName = (n, fallback) => String(n || '').replace(/\s+/g, ' ').trim().slice(0, 20) || fallback;
 const $ = (sel) => document.getElementById(sel);
 const store = {
   get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
@@ -316,10 +345,12 @@ const app = {
   pending: null,
   unread: 0,
   chatOpen: false,
+  names: { 1: 'Anfitrião', 2: 'Amigo' },
 };
+const nameOf = (seat) => app.names[seat] || (seat === 1 ? 'Anfitrião' : 'Amigo');
 
 function show(screen) {
-  for (const s of ['home', 'wait', 'info', 'game']) $(s).hidden = s !== screen;
+  for (const s of ['home', 'wait', 'join', 'info', 'game']) $(s).hidden = s !== screen;
 }
 function info(title, text, retry) {
   $('info-title').textContent = title; $('info-text').textContent = text;
@@ -332,8 +363,11 @@ function inviteLink(code) { return `${location.origin}${location.pathname}?jogo=
 function startHost(code, resume) {
   app.role = 'host'; app.mySeat = 1;
   const saved = resume ? store.get(LS.game) : null;
-  if (saved && saved.code === code) { app.full = saved.full; app.chat = saved.chat || []; app.guestToken = saved.guestToken; }
-  else { app.full = null; app.chat = []; app.guestToken = null; }
+  if (saved && saved.code === code) {
+    app.full = saved.full; app.chat = saved.chat || []; app.guestToken = saved.guestToken;
+    if (saved.names) app.names = saved.names;
+  } else { app.full = null; app.chat = []; app.guestToken = null; }
+  app.names[1] = cleanName(store.get(LS.name), app.names[1] || 'Anfitrião');
   store.set(LS.host, code);
   history.replaceState(null, '', `?jogo=${code}`);
   $('invite').value = inviteLink(code);
@@ -341,7 +375,7 @@ function startHost(code, resume) {
   openHostPeer(code, 0);
 }
 function saveHost() {
-  store.set(LS.game, { code: store.get(LS.host), full: app.full, chat: app.chat.slice(-100), guestToken: app.guestToken });
+  store.set(LS.game, { code: store.get(LS.host), full: app.full, chat: app.chat.slice(-100), guestToken: app.guestToken, names: app.names });
 }
 function openHostPeer(code, attempt) {
   const peer = new Peer(PREFIX + code, PEER_OPTS);
@@ -368,6 +402,7 @@ function onHostConn(conn) {
       if (app.guestToken && token !== app.guestToken) { conn.send({ t: 'full' }); setTimeout(() => conn.close(), 500); return; }
       if (app.conn && app.conn !== conn) app.conn.close();
       app.conn = conn; app.guestToken = token; app.lastSeen = Date.now();
+      app.names[2] = cleanName(msg.name, 'Amigo');
       if (!app.full) app.full = Domino.deal();
       saveHost();
       conn.send({ t: 'chatlog', list: app.chat });
@@ -386,7 +421,7 @@ function onHostConn(conn) {
 function hostApply(seat, msg) {
   try {
     if (msg.t === 'play') app.full = Domino.play(app.full, seat, String(msg.tile), msg.side === 'left' || msg.side === 'right' ? msg.side : null);
-    else if (msg.t === 'draw') app.full = Domino.draw(app.full, seat);
+    else if (msg.t === 'draw') app.full = Domino.draw(app.full, seat, Number(msg.index));
     else if (msg.t === 'pass') app.full = Domino.pass(app.full, seat);
     else if (msg.t === 'next') app.full = Domino.next(app.full);
   } catch (err) {
@@ -398,10 +433,20 @@ function hostApply(seat, msg) {
   saveHost(); sendState(); app.v = Domino.view(app.full, 1); render();
 }
 function sendState() {
-  if (app.conn && app.full) app.conn.send({ t: 'state', v: Domino.view(app.full, 2) });
+  if (app.conn && app.full) app.conn.send({ t: 'state', v: Domino.view(app.full, 2), names: app.names });
 }
 
 /* ---------- Amigo (convidado) ---------- */
+function askGuestName(code) {
+  const saved = store.get(LS.name);
+  if (saved) { app.names[2] = saved; startGuest(code); return; }
+  show('join'); $('guest-name').focus();
+  $('join-form').onsubmit = (e) => {
+    e.preventDefault();
+    const n = cleanName($('guest-name').value, 'Amigo');
+    store.set(LS.name, n); app.names[2] = n; startGuest(code);
+  };
+}
 function startGuest(code) {
   app.role = 'guest'; app.mySeat = 2;
   let token = store.get(LS.guest);
@@ -426,11 +471,11 @@ function connectToHost(code) {
   if (app.peer.disconnected) { app.peer.reconnect(); setTimeout(() => connectToHost(code), 2000); return; }
   const conn = app.peer.connect(PREFIX + code, { reliable: true });
   let opened = false;
-  conn.on('open', () => { opened = true; app.conn = conn; app.lastSeen = Date.now(); conn.send({ t: 'hello', token: app.token }); });
+  conn.on('open', () => { opened = true; app.conn = conn; app.lastSeen = Date.now(); conn.send({ t: 'hello', token: app.token, name: app.names[2] }); });
   conn.on('data', (msg) => {
     if (!msg || typeof msg !== 'object') return;
     app.lastSeen = Date.now();
-    if (msg.t === 'state') { app.v = msg.v; app.busy = false; if ($('game').hidden) enterGame(); else render(); }
+    if (msg.t === 'state') { app.v = msg.v; app.busy = false; if (msg.names) { app.names[1] = cleanName(msg.names[1], 'Anfitrião'); app.names[2] = cleanName(msg.names[2], 'Amigo'); } if ($('game').hidden) enterGame(); else render(); }
     else if (msg.t === 'chatlog') { app.chat = Array.isArray(msg.list) ? msg.list : []; renderChat(); }
     else if (msg.t === 'chat') pushChat(msg.msg);
     else if (msg.t === 'error') { app.busy = false; toast(msg.text); render(); }
@@ -448,7 +493,7 @@ function act(msg) {
   if (app.busy) return;
   app.pending = null;
   if (app.role === 'host') { hostApply(1, msg); return; }
-  if (!app.conn) { toast('Sem conexão com seu amigo.'); return; }
+  if (!app.conn) { toast(`Sem conexão com ${nameOf(app.mySeat === 1 ? 2 : 1)}.`); return; }
   app.busy = true; render();
   app.conn.send(msg);
   setTimeout(() => { if (app.busy) { app.busy = false; render(); } }, 6000);
@@ -468,7 +513,7 @@ function sendChat(text) {
   text = text.trim(); if (!text) return;
   if (app.role === 'host') addChat(1, text);
   else if (app.conn) app.conn.send({ t: 'chat', text });
-  else toast('Sem conexão com seu amigo.');
+  else toast(`Sem conexão com ${nameOf(app.mySeat === 1 ? 2 : 1)}.`);
 }
 function pushChat(msg, already) {
   if (!msg || typeof msg.text !== 'string') return;
@@ -482,7 +527,10 @@ function appendMsg(msg) {
   $('chat-empty').hidden = true;
   const el = document.createElement('div');
   el.className = 'msg' + (msg.from === app.mySeat ? ' mine' : '');
-  el.textContent = msg.text;
+  const from = document.createElement('span');
+  from.className = 'from'; from.textContent = msg.from === app.mySeat ? 'Você' : nameOf(msg.from);
+  el.appendChild(from);
+  el.appendChild(document.createTextNode(msg.text));
   const t = document.createElement('time');
   t.textContent = new Date(msg.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
   el.appendChild(t);
@@ -505,7 +553,7 @@ function setChat(open) {
 
 /* ---------- Desenho da mesa ---------- */
 const PIPS = { 0: [], 1: [4], 2: [2, 6], 3: [2, 4, 6], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
-const half = (n) => `<span class="half">${Array.from({ length: 9 }, (_, i) => `<span class="${PIPS[n].includes(i) ? 'pip' : ''}"></span>`).join('')}</span>`;
+const half = (n) => `<span class="half">${Array.from({ length: 9 }, (_, i) => `<span class="${PIPS[n].includes(i) ? 'pip c' + n : ''}"></span>`).join('')}</span>`;
 function tileHTML(a, b, { v = false, cls = '', button = false, data = '', disabled = false } = {}) {
   const c = `tile${v ? ' v' : ''}${cls ? ' ' + cls : ''}`;
   return button
@@ -513,6 +561,77 @@ function tileHTML(a, b, { v = false, cls = '', button = false, data = '', disabl
     : `<span class="${c}" role="img" aria-label="Peça ${a} e ${b}">${half(a)}${half(b)}</span>`;
 }
 const backHTML = () => '<span class="tile v back"><span class="half"></span><span class="half"></span></span>';
+
+/**
+ * Mesa em "cobrinha", como numa mesa real: a primeira peça fica no centro e não se move.
+ * O lado direito cresce para a direita e, na borda, dobra para baixo e volta;
+ * o lado esquerdo cresce para a esquerda e dobra para cima. Carroças ficam atravessadas.
+ */
+function layoutBoard(board, origin, W) {
+  const u = Math.max(14, Math.min(30, Math.floor(W / 17)));
+  const g = Math.max(2, Math.round(u * 0.12));
+  const pad = 8, minX = pad, maxX = W - pad;
+  const isD = (t) => t[0] === t[1];
+  origin = Math.min(Math.max(origin || 0, 0), board.length - 1);
+  const out = new Array(board.length);
+  const o = board[origin], od = isD(o);
+  const ow = od ? u : 2 * u, oh = od ? 2 * u : u;
+  const ox = Math.round(W / 2 - ow / 2);
+  out[origin] = { x: ox, y: -oh / 2, w: ow, h: oh, a: o[0], b: o[1], v: od };
+  for (const side of [1, -1]) {           // 1 = ponta direita (desce), -1 = ponta esquerda (sobe)
+    let dir = side, cy = 0, lastHalf = oh / 2; // meia-altura da última peça da fileira
+    let cursor = side === 1 ? ox + ow + g : ox - g;
+    const idx = [];
+    if (side === 1) for (let i = origin + 1; i < board.length; i++) idx.push(i);
+    else for (let i = origin - 1; i >= 0; i--) idx.push(i);
+    for (const i of idx) {
+      const t = board[i], d = isD(t);
+      const near = side === 1 ? t[0] : t[1], far = side === 1 ? t[1] : t[0];
+      const L = d ? u : 2 * u;
+      const fits = dir === 1 ? cursor + L <= maxX : cursor - L >= minX;
+      if (fits) {
+        const x = dir === 1 ? cursor : cursor - L;
+        out[i] = d
+          ? { x, y: cy - u, w: u, h: 2 * u, a: near, b: far, v: true }
+          : { x, y: cy - u / 2, w: 2 * u, h: u, a: dir === 1 ? near : far, b: dir === 1 ? far : near, v: false };
+        cursor = dir === 1 ? x + L + g : x - g;
+        lastHalf = d ? u : u / 2;
+      } else {
+        // Peça da curva: em pé, embaixo (ou em cima) da última peça da fileira.
+        const x = dir === 1 ? cursor - g - u : cursor + g;
+        const top = side === 1 ? cy + lastHalf + g : cy - lastHalf - g - 2 * u;
+        out[i] = { x, y: top, w: u, h: 2 * u, a: side === 1 ? near : far, b: side === 1 ? far : near, v: true };
+        cy = side === 1 ? top + 1.5 * u : top + 0.5 * u;
+        lastHalf = u / 2;
+        dir = -dir;
+        cursor = dir === 1 ? x + u + g : x - g;
+      }
+    }
+  }
+  return { u, tiles: out };
+}
+function drawBoard(v, lastTile) {
+  const el = $('board');
+  if (!v.board.length) { el.className = 'board empty'; el.innerHTML = '<p>A mesa está vazia.</p>'; return; }
+  el.className = 'board';
+  const W = el.clientWidth || 360, H = el.clientHeight || 300;
+  const { u, tiles } = layoutBoard(v.board, v.origin, W);
+  const minY = Math.min(...tiles.map((t) => t.y)), maxY = Math.max(...tiles.map((t) => t.y + t.h));
+  const contentH = maxY - minY + 24, height = Math.max(H, contentH);
+  const dy = (height - (maxY - minY)) / 2 - minY;
+  const last = v.board.length - 1;
+  el.innerHTML = `<div class="board-inner" style="height:${height}px;--u:${u}px">` + tiles.map((t, i) => {
+    const [a, b] = v.board[i];
+    const cls = ['tile', t.v ? 'v' : '', i === 0 || i === last ? 'end' : '',
+      `${Math.min(a, b)}-${Math.max(a, b)}` === lastTile ? 'last' : ''].filter(Boolean).join(' ');
+    return `<span class="${cls}" role="img" aria-label="Peça ${a} e ${b}" style="left:${t.x}px;top:${Math.round(t.y + dy)}px;width:${t.w}px;height:${t.h}px">${half(t.a)}${half(t.b)}</span>`;
+  }).join('') + '</div>';
+}
+let boardW = 0;
+new ResizeObserver(() => {
+  const w = $('board').clientWidth;
+  if (w && w !== boardW && app.v && !$('game').hidden) { boardW = w; drawBoard(app.v, app.v.lastAction?.type === 'play' ? app.v.lastAction.tile : null); }
+}).observe($('board'));
 
 let toastTimer;
 function toast(text) {
@@ -541,31 +660,27 @@ function render() {
   const playable = myTurn ? Domino.playable(v.hand, v.board, v.requiredTile) : [];
   const ends = Domino.ends(v.board);
 
-  $('score').innerHTML = `Você <b>${v.scores[me]}</b> <span class="muted">×</span> <b>${v.scores[op]}</b> Amigo` +
+  const opName = esc(nameOf(op));
+  $('opp-name').textContent = nameOf(op);
+  $('score').innerHTML = `${esc(nameOf(me))} <b>${v.scores[me]}</b> <span class="muted">×</span> <b>${v.scores[op]}</b> ${opName}` +
     (v.scores.draws ? ` <span class="muted small">· ${v.scores.draws} empate${v.scores.draws > 1 ? 's' : ''}</span>` : '');
   const n = v.counts[op];
   $('opp-hand').innerHTML = backHTML().repeat(Math.min(n, 12)) + (n > 12 ? `<span class="muted small">+${n - 12}</span>` : '');
   $('felt-info').innerHTML = `<span>Rodada ${v.round}</span><span>Monte: ${v.boneyardCount}</span>` + (ends ? `<span>Pontas: ${ends.left} · ${ends.right}</span>` : '');
 
   const lastTile = v.lastAction?.type === 'play' ? v.lastAction.tile : null;
-  $('board').className = 'board' + (v.board.length ? '' : ' empty');
-  $('board').innerHTML = v.board.length
-    ? v.board.map(([a, b], i) => {
-        const cls = [(i === 0 || i === v.board.length - 1) ? 'end' : '', `${Math.min(a, b)}-${Math.max(a, b)}` === lastTile ? 'last' : ''].join(' ').trim();
-        return tileHTML(a, b, { v: a === b, cls });
-      }).join('')
-    : '<p>A mesa está vazia.</p>';
+  drawBoard(v, lastTile);
 
   let status;
   if (v.roundStatus !== 'playing') status = 'Rodada encerrada';
-  else if (!myTurn) status = 'Vez do amigo';
+  else if (!myTurn) status = `Vez de ${opName}`;
   else if (v.requiredTile) status = `Sua vez — comece com ${Domino.fmt(v.requiredTile)}`;
   else if (playable.length) status = 'Sua vez';
-  else if (v.boneyardCount) status = 'Sem jogada — compre do monte';
+  else if (v.boneyardCount) status = 'Sem jogada — escolha uma peça do monte';
   else status = 'Sem jogada — passe a vez';
   const la = v.lastAction;
   const last = la && la.seat === op
-    ? (la.type === 'play' ? `Amigo jogou ${Domino.fmt(la.tile)}` : la.type === 'draw' ? 'Amigo comprou uma peça' : 'Amigo passou a vez')
+    ? (la.type === 'play' ? `${opName} jogou ${Domino.fmt(la.tile)}` : la.type === 'draw' ? `${opName} comprou uma peça` : `${opName} passou a vez`)
     : '';
   $('turn').className = 'turn' + (myTurn ? ' mine' : '');
   $('turn').innerHTML = `<strong>${status}</strong>${last ? `<span class="muted small">${last}</span>` : ''}`;
@@ -579,7 +694,11 @@ function render() {
   }
   const canDraw = myTurn && !playable.length && v.boneyardCount > 0;
   const canPass = myTurn && !playable.length && v.boneyardCount === 0;
-  $('actions').innerHTML = (canDraw ? '<button class="btn primary" data-act="draw">Comprar do monte</button>' : '') +
+  $('actions').innerHTML = (canDraw
+      ? `<div class="monte"><span class="muted small">Monte (${v.boneyardCount}) — toque na peça que quer comprar</span><div class="monte-tiles">` +
+        Array.from({ length: v.boneyardCount }, (_, i) => `<button type="button" class="tile v back" data-draw="${i}" ${app.busy ? 'disabled' : ''} aria-label="Comprar peça ${i + 1} do monte"><span class="half"></span><span class="half"></span></button>`).join('') +
+        '</div></div>'
+      : '') +
     (canPass ? '<button class="btn primary" data-act="pass">Passar a vez</button>' : '');
 
   $('hand').innerHTML = v.hand.map((t) => {
@@ -593,11 +712,11 @@ function render() {
   $('result').hidden = !done;
   if (done) {
     const tie = v.winner == null, won = v.winner === me;
-    $('result-title').textContent = tie ? 'Empate!' : won ? 'Você venceu a rodada!' : 'Seu amigo venceu a rodada';
+    $('result-title').textContent = tie ? 'Empate!' : won ? 'Você venceu a rodada!' : `${nameOf(op)} venceu a rodada`;
     $('result-text').textContent = v.endReason === 'blocked'
       ? (tie ? 'Jogo trancado com a mesma contagem de pontos.' : 'Jogo trancado: vence quem tem menos pontos na mão.')
-      : (won ? 'Você bateu!' : 'Seu amigo bateu.');
-    $('result-pips').textContent = v.pipTotals ? `Pontos na mão — você: ${v.pipTotals[me]} · amigo: ${v.pipTotals[op]}` : '';
+      : (won ? 'Você bateu!' : `${nameOf(op)} bateu.`);
+    $('result-pips').textContent = v.pipTotals ? `Pontos na mão — você: ${v.pipTotals[me]} · ${nameOf(op)}: ${v.pipTotals[op]}` : '';
     const rest = v.revealed?.[op] || [];
     $('result-reveal').innerHTML = rest.map((t) => { const [a, b] = Domino.parse(t); return tileHTML(a, b, { v: true }); }).join('');
     $('btn-next').disabled = app.busy;
@@ -614,7 +733,10 @@ $('hand').addEventListener('click', (e) => {
 $('choose').addEventListener('click', (e) => {
   const b = e.target.closest('[data-side]'); if (b && app.pending) act({ t: 'play', tile: app.pending, side: b.dataset.side });
 });
-$('actions').addEventListener('click', (e) => { const b = e.target.closest('[data-act]'); if (b) act({ t: b.dataset.act }); });
+$('actions').addEventListener('click', (e) => {
+  const d = e.target.closest('[data-draw]'); if (d && !d.disabled) { act({ t: 'draw', index: Number(d.dataset.draw) }); return; }
+  const b = e.target.closest('[data-act]'); if (b) act({ t: b.dataset.act });
+});
 $('btn-next').onclick = () => act({ t: 'next' });
 $('btn-chat').onclick = () => setChat(!app.chatOpen);
 $('chat-close').onclick = () => setChat(false);
@@ -631,7 +753,10 @@ if (navigator.share) {
   $('btn-share').onclick = () => navigator.share({ title: 'Dominó Online', text: 'Bora jogar dominó?', url: $('invite').value }).catch(() => {});
 }
 $('btn-back').onclick = () => { app.peer?.destroy(); history.replaceState(null, '', location.pathname); boot(); };
-$('btn-new').onclick = () => { app.peer?.destroy(); store.del(LS.game); startHost(randomId(), false); };
+$('btn-new').onclick = () => {
+  store.set(LS.name, cleanName($('host-name').value, 'Anfitrião'));
+  app.peer?.destroy(); store.del(LS.game); app.names = { 1: '', 2: 'Amigo' }; startHost(randomId(), false);
+};
 $('btn-continue').onclick = () => startHost(store.get(LS.host), true);
 
 // Sinal de vida: detecta quando o amigo fecha a página ou perde a conexão.
@@ -650,10 +775,11 @@ function boot() {
   const code = (new URLSearchParams(location.search).get('jogo') || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const myHost = store.get(LS.host);
   if (code && code === myHost) startHost(code, true);       // anfitrião recarregou a página
-  else if (code) startGuest(code);                          // amigo abrindo o convite
+  else if (code) askGuestName(code);                          // amigo abrindo o convite
   else {
     const saved = store.get(LS.game);
     $('btn-continue').hidden = !(saved && saved.full && saved.code === myHost);
+    $('host-name').value = store.get(LS.name) || '';
     show('home');
   }
 }
