@@ -238,6 +238,12 @@ button.tile{cursor:pointer;transition:transform .15s,box-shadow .15s}button.tile
 .chat-head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);font-weight:700}
 @media (max-width:899px){.chat-head{padding-top:max(10px,env(safe-area-inset-top))}.chat-close{min-width:44px;min-height:44px}}
 .chat-close{background:none;border:0;font-size:1.3rem;cursor:pointer;color:var(--muted)}
+.chat-back{display:none;background:none;border:0;cursor:pointer;color:var(--accent);font-weight:700;font-size:1rem;padding:8px 4px;min-height:44px}
+@media (max-width:899px){.chat-back{display:block}.chat-head span{flex:1;text-align:center}}
+/* No app instalado (iPhone), garante espaço para a barra do relógio/bateria mesmo se o iOS não informar a área segura */
+.is-app .chat-head,.is-app .topbar{padding-top:max(env(safe-area-inset-top),54px)}
+.is-app .chat-form,.is-app .table,.is-app .mini,.is-app .pac{padding-bottom:max(env(safe-area-inset-bottom),20px)}
+html{background:var(--felt-3)}
 .msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px}
 .msg{max-width:85%;padding:7px 11px;border-radius:14px;background:var(--soft);align-self:flex-start;word-wrap:break-word;white-space:pre-wrap;line-height:1.3}
 .msg.mine{align-self:flex-end;background:var(--accent);color:var(--accent-ink)}
@@ -305,7 +311,7 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
   </div>
   <button class="link" id="btn-solo">🃏 Jogar sozinho</button>
   <button class="link" id="btn-install" hidden style="margin-top:0">📲 Instalar app</button>
-  <p class="muted small" style="opacity:.5;margin-top:6px">versão 13</p>
+  <p class="muted small" style="opacity:.5;margin-top:6px">versão 14</p>
 </main>
 
 <!-- Sala aberta, aguardando o amigo -->
@@ -420,7 +426,7 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
     </main>
    </div>
     <aside class="chat" id="chat" hidden>
-      <div class="chat-head"><span>Chat</span><button class="chat-close" id="chat-close" aria-label="Fechar chat">×</button></div>
+      <div class="chat-head"><button class="chat-back" id="chat-back" aria-label="Voltar ao jogo">‹ Voltar</button><span>Chat</span><button class="chat-close" id="chat-close" aria-label="Fechar chat">×</button></div>
       <div class="msgs" id="msgs"><p class="chat-empty" id="chat-empty">Nenhuma mensagem ainda.</p></div>
       <div class="quick" id="quick"></div>
       <form class="chat-form" id="chat-form" autocomplete="off">
@@ -1554,6 +1560,7 @@ function render() {
     : scr === 'paciencia' && G.pacStats ? `Vitórias <b>${G.pacStats.won}</b> de ${G.pacStats.played}` : '';
   renderSeriesBar(scr);
   const mine = isMyTurn(scr);
+  if (app.updateReady && scr === 'menu') { app.updateReady = false; setTimeout(() => location.reload(), 300); }
   playSounds(scr);
   if (mine && !app.wasMyTurn) { flashTitle('🔔 Sua vez!'); if (app.role !== 'solo' && app.wasMyTurn === false) { vibrate(70); setTimeout(() => sfx('turn'), 250); } }
   app.wasMyTurn = mine;
@@ -2106,6 +2113,7 @@ $('actions').addEventListener('click', (e) => {
 
 $('btn-chat').onclick = () => setChat(!app.chatOpen);
 $('chat-close').onclick = () => setChat(false);
+$('chat-back').onclick = () => setChat(false);
 $('chat-form').onsubmit = (e) => { e.preventDefault(); sendChat($('chat-input').value); $('chat-input').value = ''; };
 const QUICK = ['Calma aí', 'Já volto', 'Sua vez!', 'Boa jogada!', 'Kkkk'];
 $('quick').innerHTML = QUICK.map((q) => `<button type="button">${q}</button>`).join('');
@@ -2165,6 +2173,22 @@ async function keepAwake(on) {
     } else if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; }
   } catch { wakeLock = null; /* sem suporte ou bateria fraca */ }
 }
+if (isStandalone()) document.documentElement.classList.add('is-app');
+const APP_VERSION = 14;
+/** App instalado: ao voltar para ele, confere se há versão nova do site e recarrega (fora de partida). */
+async function checkUpdate() {
+  if (!/^https?:$/.test(location.protocol)) return;
+  try {
+    const html = await (await fetch(location.pathname + '?v=' + Date.now(), { cache: 'no-store' })).text();
+    const m = /const APP_VERSION = (\d+);/.exec(html);
+    if (!m || Number(m[1]) <= APP_VERSION) return;
+    const busy = !$('game').hidden && app.G && app.G.screen !== 'menu'; // no meio de um jogo: espera voltar ao menu
+    if (busy) { app.updateReady = true; return; }
+    location.reload();
+  } catch { /* sem internet */ }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkUpdate(); });
+setInterval(checkUpdate, 10 * 60 * 1000);
 const vibrate = (p) => { try { navigator.vibrate?.(p); } catch { /* sem suporte */ } };
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && !$('game').hidden) keepAwake(true); });
 let installEvent = null;
