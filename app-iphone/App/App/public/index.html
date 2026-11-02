@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0b3326" />
-<script>try{if(localStorage.getItem('mesa:tema')==='light')document.documentElement.dataset.theme='light'}catch(e){}</script>
+<script>try{if(localStorage.getItem('mesa:tema')==='light')document.documentElement.dataset.theme='light';var o=JSON.parse(localStorage.getItem('mesa:ajustes')||'{}');for(var k in o)document.documentElement.dataset[k]=o[k]}catch(e){}</script>
 <title>Mesa de Jogos</title>
 <link rel="manifest" href="/manifest.webmanifest" />
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
@@ -261,8 +261,18 @@ html{background:var(--felt-3)}
 .reveal{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin:8px 0 18px;--u:18px}
 .name-input{width:100%;background:var(--sunk);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:12px;font-size:1rem;text-align:center;margin-bottom:12px}
 .monte{display:flex;flex-direction:column;align-items:center;gap:6px}
-.monte-tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;--u:clamp(16px,4.2vw,22px)}
-.monte-tiles .tile{cursor:pointer;transition:transform .12s}.monte-tiles .tile:hover:not(:disabled){transform:translateY(-4px);box-shadow:0 0 0 2px var(--accent),0 6px 12px rgba(0,0,0,.45)}
+.monte-tiles{position:relative;width:min(92vw,380px);height:92px;--u:clamp(13px,3.5vw,17px)}
+.monte{gap:2px}
+.monte-tiles .tile{position:absolute;margin-left:calc(var(--u)*-.5)}
+/* arrastar peça */
+.hand .tile.playable{touch-action:none;cursor:grab}
+#t-domino{min-height:0}
+#t-domino .felt{min-height:120px}
+.drag-ghost{position:fixed;z-index:50;pointer-events:none;transform:translate(-50%,-50%) scale(1.15);box-shadow:0 14px 30px rgba(0,0,0,.5)!important;opacity:.95}
+.hand .tile.dragging{opacity:.25}
+.felt.drop-ok{box-shadow:inset 0 0 0 3px var(--accent),inset 0 10px 40px rgba(0,0,0,.35)}
+.board .tile.drop-here{box-shadow:0 0 0 4px #5be37d,0 0 18px #5be37d!important}
+.monte-tiles .tile{cursor:pointer;transition:transform .12s,box-shadow .12s}.monte-tiles .tile:hover:not(:disabled){transform:rotate(var(--r)) translateY(-4px)!important;box-shadow:0 0 0 2px var(--accent),0 6px 12px rgba(0,0,0,.45)}
 .monte-tiles .tile:disabled{opacity:.5;cursor:default}
 .room-name{font-size:1.9rem;font-weight:800;margin:0 0 10px;word-break:break-word}
 a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box}
@@ -287,6 +297,44 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
 @keyframes bubbleOut{to{opacity:0;transform:translateY(-8px)}}
 :root[data-theme="light"] .bubble b{color:#9a6b00}
 :root[data-theme="light"] .bubble{background:#fff}
+.sheet{max-height:min(88vh,720px);overflow:auto;text-align:left;width:min(100%,420px)}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.sheet-head h2{margin:0}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.opt.col{flex-direction:column;align-items:stretch}
+.opt>span{font-weight:600}
+.seg{display:inline-flex;background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.seg.wide{display:flex}.seg.wide button{flex:1}
+.seg button{border:0;background:none;padding:7px 12px;border-radius:8px;cursor:pointer;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.swatches button{width:42px;height:42px;border-radius:50%;border:3px solid transparent;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.25),transparent 60%),var(--sw);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.swatches button.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--accent)}
+.preview{display:flex;justify-content:center;gap:10px;padding:14px;margin-top:12px;border-radius:12px;background:var(--felt-bg);--u:24px}
+.rank-list{list-style:none;margin:8px 0 14px;padding:0}
+.rank-list li{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line)}
+.rank-list .pos{width:28px;text-align:center;font-size:1.2rem}
+.rank-list .nm{flex:1;font-weight:700}.rank-list .nm small{display:block;font-weight:400;color:var(--muted)}
+.rank-list .rk-pts{font-weight:800;color:var(--accent);font-size:1.15rem}
+.rank-games{width:100%;border-collapse:collapse;font-size:.9rem}
+.rank-games th,.rank-games td{padding:7px 4px;border-bottom:1px solid var(--line);text-align:center}
+.rank-games th:first-child,.rank-games td:first-child{text-align:left}
+.rank-games th{color:var(--muted);font-weight:600}
+/* cores da mesa (no escuro muda o fundo todo; no claro, só a mesa do jogo) */
+:root[data-mesa="azul"]:not([data-theme="light"]){--felt-1:#1a4f80;--felt-2:#103457;--felt-3:#0a223a}
+:root[data-mesa="vinho"]:not([data-theme="light"]){--felt-1:#6b1d2c;--felt-2:#4a1220;--felt-3:#2e0a14}
+:root[data-mesa="madeira"]:not([data-theme="light"]){--felt-1:#7a4d24;--felt-2:#553417;--felt-3:#36210e}
+:root[data-mesa="grafite"]:not([data-theme="light"]){--felt-1:#3a3f44;--felt-2:#25292d;--felt-3:#16191b}
+:root[data-theme="light"][data-mesa="azul"]{--felt-bg:radial-gradient(ellipse at center,#2f6aa6,#1a4675)}
+:root[data-theme="light"][data-mesa="vinho"]{--felt-bg:radial-gradient(ellipse at center,#8a2a3d,#5a1626)}
+:root[data-theme="light"][data-mesa="madeira"]{--felt-bg:radial-gradient(ellipse at center,#9a6634,#6a4320)}
+:root[data-theme="light"][data-mesa="grafite"]{--felt-bg:radial-gradient(ellipse at center,#4a5056,#2a2e33)}
+/* estilo das peças do dominó (o verso das peças não muda) */
+:root[data-pecas="marfim"] .tile:not(.back){background:linear-gradient(160deg,#fff7df 0%,#f1e4c2 55%,#e4d3a6 100%);border-color:#cdb98a}
+:root[data-pecas="preta"] .tile:not(.back){background:linear-gradient(160deg,#3d3d3d 0%,#232323 55%,#161616 100%);border-color:#0b0b0b}
+:root[data-pecas="preta"] .tile.v:not(.back) .half+.half,:root[data-pecas="preta"] .tile:not(.v):not(.back) .half+.half{border-color:#555}
+:root[data-pintas="uma"] .pip{--pc:#1b1b1b}
+:root[data-pecas="preta"][data-pintas="uma"] .pip{--pc:#f5f2e8}
+:root[data-pecas="preta"] .pip.c4{--pc:#a1887f}:root[data-pecas="preta"] .pip.c6{--pc:#b05ad0}:root[data-pecas="preta"] .pip.c1{--pc:#42a5f5}
 .banner{background:rgba(232,193,90,.15);color:var(--accent);text-align:center;padding:6px;font-size:.85rem}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -295,7 +343,7 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
 
 <!-- Tela inicial -->
 <main id="home" class="screen" hidden>
-  <button class="theme-btn" data-theme-toggle aria-label="Mudar tema"></button>
+  <button class="theme-btn" data-open-settings aria-label="Ajustes">⚙️</button>
   <div class="hero" id="hero"></div>
   <h1>Mesa de Jogos</h1>
   <div class="panel">
@@ -311,7 +359,7 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
   </div>
   <button class="link" id="btn-solo">🃏 Jogar sozinho</button>
   <button class="link" id="btn-install" hidden style="margin-top:0">📲 Instalar app</button>
-  <p class="muted small" style="opacity:.5;margin-top:6px">versão 14</p>
+  <p class="muted small" style="opacity:.5;margin-top:6px">versão 15</p>
 </main>
 
 <!-- Sala aberta, aguardando o amigo -->
@@ -353,7 +401,7 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
       <h2>Escolha o jogo</h2>
       <p class="muted small" style="margin:-6px 0 4px" id="menu-sub">Qualquer um dos dois pode escolher. Os dois entram juntos.</p>
       <div class="cards" id="cards"></div>
-      <div class="row" style="gap:4px"><button class="link theme-link" data-theme-toggle></button><button class="link theme-link" data-sound-toggle></button></div>
+      <div class="row" style="gap:4px"><button class="link theme-link" data-open-settings>⚙️ Ajustes</button><button class="link theme-link" data-open-rank>🏆 Ranking</button></div>
     </main>
 
     <main class="mini" id="t-velha" hidden>
@@ -458,6 +506,27 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
   <div class="bubbles" id="bubbles" aria-live="polite"></div>
 </div>
 
+<div class="overlay" id="settings" hidden>
+  <div class="panel sheet">
+    <div class="sheet-head"><h2>Ajustes</h2><button class="chat-close" data-close-sheet aria-label="Fechar">×</button></div>
+    <div class="opt"><span>Tema</span><div class="seg" data-key="tema"><button data-v="dark">Escuro</button><button data-v="light">Claro</button></div></div>
+    <div class="opt"><span>Som</span><div class="seg" data-key="som"><button data-v="on">Ligado</button><button data-v="off">Desligado</button></div></div>
+    <div class="opt col"><span>Cor da mesa</span><div class="swatches" data-key="mesa">
+      <button data-v="verde" style="--sw:#155a40" aria-label="Verde"></button><button data-v="azul" style="--sw:#1a4f80" aria-label="Azul"></button>
+      <button data-v="vinho" style="--sw:#6b1d2c" aria-label="Vinho"></button><button data-v="madeira" style="--sw:#7a4d24" aria-label="Madeira"></button>
+      <button data-v="grafite" style="--sw:#2b2f33" aria-label="Grafite"></button></div></div>
+    <div class="opt col"><span>Peças do dominó</span><div class="seg wide" data-key="pecas"><button data-v="branca">Branca</button><button data-v="marfim">Marfim</button><button data-v="preta">Preta</button></div></div>
+    <div class="opt col"><span>Pintas</span><div class="seg wide" data-key="pintas"><button data-v="cores">Coloridas</button><button data-v="uma">Uma cor</button></div></div>
+    <div class="preview" id="tile-preview"></div>
+    <button class="btn big" data-open-rank style="margin-top:12px">🏆 Ver ranking</button>
+  </div>
+</div>
+<div class="overlay" id="rank" hidden>
+  <div class="panel sheet">
+    <div class="sheet-head"><h2>🏆 Ranking</h2><button class="chat-close" data-close-sheet aria-label="Fechar">×</button></div>
+    <div id="rank-body"></div>
+  </div>
+</div>
 <div class="overlay" id="install-help" hidden>
   <div class="panel"><h2>Instalar no iPhone</h2>
     <p>1. Toque em <b>Compartilhar</b> (o quadrado com a seta) na barra do Safari.</p>
@@ -562,6 +631,7 @@ const Domino = (() => {
     if (playable(prev.hands[seat], prev.board, prev.requiredTile).length) throw new GameError('Você tem peça para jogar.');
     if (!prev.boneyard.length) throw new GameError('O monte está vazio. Passe a vez.');
     const s = structuredClone(prev);
+    s.boneyard = shuffle(s.boneyard); // embaralha o monte de novo a cada compra
     const i = Number.isInteger(index) && index >= 0 && index < s.boneyard.length ? index : 0;
     s.hands[seat].push(s.boneyard.splice(i, 1)[0]);
     s.lastAction = { seat, type: 'draw' };
@@ -1504,8 +1574,22 @@ function drawBoard(v, lastTile) {
     const [a, b] = v.board[i];
     const cls = ['tile', t.v ? 'v' : '', i === 0 || i === last ? 'end' : '',
       `${Math.min(a, b)}-${Math.max(a, b)}` === lastTile ? 'last' : ''].filter(Boolean).join(' ');
-    return `<span class="${cls}" role="img" aria-label="Peça ${a} e ${b}" style="left:${t.x}px;top:${Math.round(t.y + dy)}px;width:${t.w}px;height:${t.h}px">${half(t.a)}${half(t.b)}</span>`;
+    const endAttr = i === 0 && i === last ? 'data-end="both"' : i === 0 ? 'data-end="left"' : i === last ? 'data-end="right"' : '';
+    return `<span class="${cls}" ${endAttr} role="img" aria-label="Peça ${a} e ${b}" style="left:${t.x}px;top:${Math.round(t.y + dy)}px;width:${t.w}px;height:${t.h}px">${half(t.a)}${half(t.b)}</span>`;
   }).join('') + '</div>';
+}
+/** Monte espalhado como numa mesa: posições e ângulos sorteados, estáveis enquanto a mesa não muda. */
+function scatterPile(n, seed) {
+  let h = 2166136261; for (const ch of String(seed)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+  const rnd = () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) ^ Math.imul(h ^ (h >>> 13), 3266489909)) >>> 0) / 4294967296;
+  const cols = Math.min(7, Math.max(1, Math.ceil(n / 2))), rows = n > 7 ? 2 : 1;
+  const cells = []; for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) cells.push([r, c]);
+  for (let i = cells.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [cells[i], cells[j]] = [cells[j], cells[i]]; }
+  return Array.from({ length: n }, (_, i) => {
+    const [r, c] = cells[i % cells.length];
+    return { x: Math.round((c + 0.5) / cols * 86 + 2 + (rnd() - 0.5) * 6), y: Math.round(6 + r * 40 + (rnd() - 0.5) * 10 + (rows === 1 ? 20 : 0)),
+      r: Math.round((rnd() - 0.5) * 120), z: Math.floor(rnd() * 20) };
+  });
 }
 let boardW = 0;
 new ResizeObserver(() => {
@@ -1651,7 +1735,7 @@ function renderDomino() {
   const canPass = myTurn && !playable.length && v.boneyardCount === 0;
   $('actions').innerHTML = (canDraw
       ? `<div class="monte"><span class="muted small">Monte (${v.boneyardCount}) — toque na peça que quer comprar</span><div class="monte-tiles">` +
-        Array.from({ length: v.boneyardCount }, (_, i) => `<button type="button" class="tile v back" data-draw="${i}" ${app.busy ? 'disabled' : ''} aria-label="Comprar peça ${i + 1} do monte"><span class="half"></span><span class="half"></span></button>`).join('') +
+        scatterPile(v.boneyardCount, `${v.round}-${v.board.length}-${v.hand.length}`).map((p, i) => `<button type="button" class="tile v back" data-draw="${i}" ${app.busy ? 'disabled' : ''} aria-label="Comprar peça ${i + 1} do monte" style="left:${p.x}%;top:${p.y}px;--r:${p.r}deg;transform:rotate(${p.r}deg);z-index:${p.z}"><span class="half"></span><span class="half"></span></button>`).join('') +
         '</div></div>'
       : '') +
     (canPass ? '<button class="btn primary" data-act="pass">Passar a vez</button>' : '');
@@ -2097,7 +2181,67 @@ document.addEventListener('keydown', (e) => {
   const b = $('forca-body').querySelector(`[data-letter="${L}"]`); if (b && !b.disabled) act({ t: 'forca-guess', letter: L });
 });
 
+/* Arrastar a peça da mão até a mesa (dedo ou mouse). Tocar continua funcionando. */
+const drag = { id: null, el: null, ghost: null, x0: 0, y0: 0, on: false, side: null, suppress: false };
+function dragSides(id) { return Domino.distinctPlacements(id, app.v.board); }
+/** Ponta escolhida pelo lugar onde a peça está: a mais perto entre as que aceitam a peça. */
+function dropSide(x, y) {
+  const felt = document.querySelector('#t-domino .felt').getBoundingClientRect();
+  if (x < felt.left || x > felt.right || y < felt.top || y > felt.bottom) return null;
+  const sides = dragSides(drag.id);
+  if (sides.length <= 1) return sides[0] || null;
+  let best = null;
+  for (const side of sides) {
+    const el = $('board').querySelector(`[data-end="${side}"]`) || $('board').querySelector('[data-end="both"]');
+    if (!el) continue;
+    const r = el.getBoundingClientRect(), d = Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2));
+    if (!best || d < best.d) best = { side, d };
+  }
+  return best ? best.side : sides[0];
+}
+function markDrop(side) {
+  $('board').querySelectorAll('.drop-here').forEach((e) => e.classList.remove('drop-here'));
+  document.querySelector('#t-domino .felt').classList.toggle('drop-ok', !!side);
+  if (side && app.v.board.length) {
+    const el = $('board').querySelector(`[data-end="${side}"]`) || $('board').querySelector('[data-end="both"]');
+    el?.classList.add('drop-here');
+  }
+}
+function endDrag() {
+  drag.ghost?.remove(); drag.el?.classList.remove('dragging'); markDrop(null);
+  Object.assign(drag, { id: null, el: null, ghost: null, on: false, side: null });
+}
+$('hand').addEventListener('pointerdown', (e) => {
+  const btn = e.target.closest('[data-tile]');
+  if (!btn || btn.disabled || app.busy) return;
+  Object.assign(drag, { id: btn.dataset.tile, el: btn, x0: e.clientX, y0: e.clientY, on: false });
+});
+document.addEventListener('pointermove', (e) => {
+  if (!drag.id) return;
+  if (!drag.on) {
+    if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < 8) return;
+    drag.on = true; app.pending = null; $('choose').hidden = true;
+    drag.ghost = drag.el.cloneNode(true); drag.ghost.classList.add('drag-ghost'); drag.ghost.classList.remove('playable', 'selected');
+    drag.ghost.style.setProperty('--u', getComputedStyle($('hand')).getPropertyValue('--u'));
+    document.body.appendChild(drag.ghost); drag.el.classList.add('dragging');
+  }
+  e.preventDefault();
+  drag.ghost.style.left = e.clientX + 'px'; drag.ghost.style.top = e.clientY + 'px';
+  const side = dropSide(e.clientX, e.clientY);
+  if (side !== drag.side) { drag.side = side; markDrop(side); }
+}, { passive: false });
+document.addEventListener('pointerup', (e) => {
+  if (!drag.id) return;
+  if (drag.on) {
+    const side = dropSide(e.clientX, e.clientY), id = drag.id;
+    drag.suppress = true; setTimeout(() => (drag.suppress = false), 50);
+    endDrag();
+    if (side) act({ t: 'play', tile: id, side });
+  } else endDrag();
+});
+document.addEventListener('pointercancel', endDrag);
 $('hand').addEventListener('click', (e) => {
+  if (drag.suppress) return;
   const btn = e.target.closest('[data-tile]'); if (!btn || btn.disabled) return;
   const t = btn.dataset.tile, sides = Domino.distinctPlacements(t, app.v.board);
   if (sides.length === 1) act({ t: 'play', tile: t, side: sides[0] });
@@ -2174,7 +2318,7 @@ async function keepAwake(on) {
   } catch { wakeLock = null; /* sem suporte ou bateria fraca */ }
 }
 if (isStandalone()) document.documentElement.classList.add('is-app');
-const APP_VERSION = 14;
+const APP_VERSION = 15;
 /** App instalado: ao voltar para ele, confere se há versão nova do site e recarrega (fora de partida). */
 async function checkUpdate() {
   if (!/^https?:$/.test(location.protocol)) return;
@@ -2275,7 +2419,7 @@ function playSounds(scr) {
   const now = snapOf(scr), prev = app.snap;
   app.snap = now ? { scr, ...now } : null;
   if (!now || !prev || prev.scr !== scr || prev.r !== now.r) return;
-  if (now.e && !prev.e) { sfx(now.e === 'ganhou' ? 'win' : now.e === 'perdeu' ? 'lose' : 'draw_game'); return; }
+  if (now.e && !prev.e) { recordResult(scr, now.e); sfx(now.e === 'ganhou' ? 'win' : now.e === 'perdeu' ? 'lose' : 'draw_game'); return; }
   if (scr === 'domino') { if (now.a > prev.a) sfx('piece'); else if (now.b < prev.b) sfx('draw'); }
   else if (scr === 'ultima') { if (now.a !== prev.a) sfx('card'); else if (now.b > prev.b) sfx('draw'); }
   else if (scr === 'pontos') { if (now.b > prev.b) sfx('point'); else if (now.a > prev.a) sfx('tick'); }
@@ -2299,6 +2443,78 @@ function applyTheme(t) {
 }
 document.addEventListener('click', (e) => { if (e.target.closest('[data-theme-toggle]')) applyTheme(currentTheme() === 'light' ? 'dark' : 'light'); });
 applyTheme(currentTheme());
+
+/* ---------- Ajustes ---------- */
+const OPT_DEFAULTS = { mesa: 'verde', pecas: 'branca', pintas: 'cores' };
+function getOpts() { try { return { ...OPT_DEFAULTS, ...JSON.parse(localStorage.getItem('mesa:ajustes') || '{}') }; } catch { return { ...OPT_DEFAULTS }; } }
+function setOpt(k, v) {
+  const o = getOpts(); o[k] = v;
+  try { localStorage.setItem('mesa:ajustes', JSON.stringify(o)); } catch { /* sem storage */ }
+  document.documentElement.dataset[k] = v;
+}
+for (const [k, v] of Object.entries(getOpts())) document.documentElement.dataset[k] = v;
+function renderSettings() {
+  const o = getOpts(), cur = { ...o, tema: currentTheme(), som: soundOn() ? 'on' : 'off' };
+  $('settings').querySelectorAll('[data-key]').forEach((g) => g.querySelectorAll('[data-v]').forEach((b) => b.classList.toggle('on', b.dataset.v === cur[g.dataset.key])));
+  $('tile-preview').innerHTML = tileHTML(6, 6, { v: true }) + tileHTML(1, 5, { v: true }) + tileHTML(3, 4) ;
+}
+function redrawBoard() { if (app.G?.screen === 'domino' && app.v) drawBoard(app.v, app.v.lastAction?.type === 'play' ? app.v.lastAction.tile : null); }
+$('settings').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-v]'), g = b?.closest('[data-key]'); if (!b || !g) return;
+  const k = g.dataset.key, v = b.dataset.v;
+  if (k === 'tema') applyTheme(v);
+  else if (k === 'som') { try { localStorage.setItem('mesa:som', v); } catch { /* */ } if (v === 'on') sfx('tick'); }
+  else setOpt(k, v);
+  renderSettings(); redrawBoard();
+});
+const openSheet = (id) => { document.querySelectorAll('.overlay.sheet-open').forEach((o) => { o.hidden = true; o.classList.remove('sheet-open'); }); $(id).hidden = false; $(id).classList.add('sheet-open'); };
+document.addEventListener('click', (e) => {
+  if (e.target.closest('[data-open-settings]')) { renderSettings(); openSheet('settings'); }
+  else if (e.target.closest('[data-open-rank]')) { renderRank(); openSheet('rank'); }
+  else if (e.target.closest('[data-close-sheet]') || e.target.classList.contains('sheet-open')) {
+    const o = e.target.closest('.overlay'); if (o) { o.hidden = true; o.classList.remove('sheet-open'); }
+  }
+});
+
+/* ---------- Histórico e ranking (fica salvo neste aparelho) ---------- */
+const HIST_KEY = 'mesa:historico';
+function getHist() { try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch { return []; } }
+function recordResult(scr, result) {
+  const op = scr === 'paciencia' ? null : nameOf(otherSeat(app.mySeat));
+  const h = getHist(); h.push({ g: scr, op, r: result, t: Date.now() });
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(-2000))); } catch { /* sem storage */ }
+}
+function renderRank() {
+  const h = getHist(), me = cleanName(store.get(LS.name), 'Você');
+  if (!h.length) { $('rank-body').innerHTML = '<p class="muted">Ainda não há partidas. Jogue e as vitórias aparecem aqui.</p>'; return; }
+  // pessoas: você + cada adversário (vitórias contra você)
+  const people = new Map([[me.toLowerCase(), { nm: me, v: 0, d: 0, e: 0, you: true }]]);
+  const meRow = people.get(me.toLowerCase());
+  for (const x of h) {
+    if (x.r === 'ganhou') meRow.v++; else if (x.r === 'perdeu') meRow.d++; else meRow.e++;
+    if (!x.op) continue;
+    const k = x.op.toLowerCase();
+    if (!people.has(k)) people.set(k, { nm: x.op, v: 0, d: 0, e: 0 });
+    const p = people.get(k);
+    if (x.r === 'perdeu') p.v++; else if (x.r === 'ganhou') p.d++; else p.e++;
+  }
+  const rows = [...people.values()].sort((a, b) => b.v - a.v || a.d - b.d);
+  const medal = ['🥇', '🥈', '🥉'];
+  const list = rows.map((p, i) => `<li><span class="pos">${medal[i] || i + 1}</span><span class="nm">${esc(p.nm)}${p.you ? ' (você)' : ''}<small>${p.v} vitória${p.v === 1 ? '' : 's'} · ${p.d} derrota${p.d === 1 ? '' : 's'}${p.e ? ` · ${p.e} empate${p.e === 1 ? '' : 's'}` : ''}${p.you ? '' : ' contra você'}</small></span><span class="rk-pts">${p.v}</span></li>`).join('');
+  const per = {};
+  for (const x of h) { const g = (per[x.g] ||= { v: 0, d: 0, e: 0 }); if (x.r === 'ganhou') g.v++; else if (x.r === 'perdeu') g.d++; else g.e++; }
+  const order = ['domino', 'ultima', 'pontos', 'velha', 'ligue4', 'forca', 'paciencia'];
+  const table = order.filter((g) => per[g]).map((g) => `<tr><td>${GAMES[g].title}</td><td>${per[g].v + per[g].d + per[g].e}</td><td>${per[g].v}</td><td>${per[g].d}</td></tr>`).join('');
+  $('rank-body').innerHTML = `<ul class="rank-list">${list}</ul>
+    <p class="muted small" style="margin:0 0 6px">Suas partidas por jogo</p>
+    <table class="rank-games"><tr><th>Jogo</th><th>Partidas</th><th>Vitórias</th><th>Derrotas</th></tr>${table}</table>
+    <p class="muted small" style="margin-top:12px">O ranking fica salvo neste aparelho e conta as partidas que você jogou aqui.</p>
+    <button class="link" id="rank-reset">${app.rankConfirm ? 'Toque de novo para apagar tudo' : 'Zerar ranking'}</button>`;
+  $('rank-reset').onclick = () => {
+    if (!app.rankConfirm) { app.rankConfirm = true; renderRank(); setTimeout(() => { app.rankConfirm = false; if (!$('rank').hidden) renderRank(); }, 3000); return; }
+    app.rankConfirm = false; try { localStorage.removeItem(HIST_KEY); } catch { /* */ } renderRank();
+  };
+}
 
 /* ---------- Início ---------- */
 function boot() {

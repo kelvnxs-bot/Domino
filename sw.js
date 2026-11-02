@@ -1,7 +1,7 @@
 // Mesa de Jogos — service worker.
 // Página: busca sempre a versão nova na internet e só usa a cópia guardada se estiver sem conexão,
 // assim cada atualização publicada chega na hora.
-const CACHE = 'mesa-v14';
+const CACHE = 'mesa-v15';
 const CORE = ['/', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'];
 const PEERJS = 'https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js';
 

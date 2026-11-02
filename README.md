@@ -3,7 +3,13 @@
 Jogos para dois pelo celular ou computador: gere o número da sala, passe para um amigo e escolham no menu entre
 **Dominó, Última!, Pontinhos, Jogo da Velha, Ligue 4 e Forca**. Tem chat com mensagens rápidas ("Calma aí", "Já volto"…),
 que continua o mesmo em todos os jogos. O jogo inteiro é o `index.html`, sem servidor próprio, sem banco de
-dados e sem cadastro. Tem **tema claro e escuro** (☀️/🌙 na tela inicial ou "Tema claro/escuro" no menu).
+dados e sem cadastro.
+
+**⚙️ Ajustes** (na tela inicial ou no menu): tema claro/escuro, som, cor da mesa (verde, azul, vinho, madeira,
+grafite), peças do dominó (branca, marfim, preta) e pintas coloridas ou de uma cor só.
+
+**🏆 Ranking** (no menu): junta todas as partidas de todos os jogos — você e cada adversário ordenados por vitórias,
+mais uma tabela das suas partidas por jogo. Fica salvo no aparelho; dá para zerar (dois toques).
 
 ## Instalar como app
 
@@ -61,7 +67,9 @@ Recarregou a página ou caiu a internet? Reconecta sozinho em poucos segundos, s
 - 1ª rodada: começa quem tem a maior carroça e é obrigado a jogá-la (sem carroças, a peça de maior soma).
   Nas seguintes, começa quem venceu a anterior.
 - A peça precisa ter o número de uma das pontas; se encaixar nas duas, você escolhe.
-- Sem jogada: compra do monte (uma por vez). Monte vazio: passa a vez.
+  Dá para tocar na peça ou **arrastá-la até a ponta** da mesa (a ponta onde ela vai cair fica verde).
+- Sem jogada: compra do monte (uma por vez) — as peças ficam espalhadas e o monte é embaralhado de novo a cada
+  compra, então a escolha é sorte de verdade. Monte vazio: passa a vez.
 - Vence quem bater. Jogo trancado: vence quem tem menos pontos na mão; pontos iguais = empate.
 
 ## Outros jogos
