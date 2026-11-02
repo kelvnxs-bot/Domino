@@ -1,0 +1,14 @@
+{
+	"appId": "com.kelvnxs.mesadejogos",
+	"appName": "Mesa de Jogos",
+	"webDir": "www",
+	"server": {
+		"url": "https://domino-online-seven.vercel.app",
+		"errorPath": "index.html"
+	},
+	"ios": {
+		"contentInset": "never",
+		"backgroundColor": "#0b3326"
+	},
+	"packageClassList": []
+}
