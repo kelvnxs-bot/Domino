@@ -94,8 +94,8 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .mini{flex:1;display:flex;flex-direction:column;align-items:center;gap:14px;padding:14px 16px 24px;width:100%;max-width:640px;margin:0 auto}
 .mini .turn{width:100%}
 .mini-head{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.velha{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(84vw,330px);aspect-ratio:1}
-.velha button{border:0;border-radius:14px;background:rgba(0,0,0,.28);box-shadow:inset 0 0 0 1px var(--line);font-size:clamp(2.4rem,13vw,4rem);font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.velha{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:8px;width:min(84vw,330px);height:min(84vw,330px);flex:none}
+.velha button{min-width:0;min-height:0;overflow:hidden;padding:0;border:0;border-radius:14px;background:rgba(0,0,0,.28);box-shadow:inset 0 0 0 1px var(--line);font-size:clamp(2.4rem,13vw,4rem);font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
 .velha button:disabled{cursor:default}
 .velha button.x{color:var(--accent)}.velha button.o{color:#7cc4ff}
 .velha button.win{background:rgba(232,193,90,.25);box-shadow:inset 0 0 0 2px var(--accent)}
@@ -359,7 +359,7 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
   </div>
   <button class="link" id="btn-solo">🃏 Jogar sozinho</button>
   <button class="link" id="btn-install" hidden style="margin-top:0">📲 Instalar app</button>
-  <p class="muted small" style="opacity:.5;margin-top:6px">versão 15</p>
+  <p class="muted small" style="opacity:.5;margin-top:6px">versão 16</p>
 </main>
 
 <!-- Sala aberta, aguardando o amigo -->
@@ -580,8 +580,18 @@ const Domino = (() => {
     }
     return best;
   }
-  function deal(round = 1, scores = { 1: 0, 2: 0, draws: 0 }, first = null) {
-    const d = shuffle(deck()), hands = { 1: d.slice(0, 7), 2: d.slice(7, 14) };
+  const handScore = (h) => { const c = Array(7).fill(0); for (const t of h) { const [a, b] = parse(t); c[a]++; if (b !== a) c[b]++; } return c.filter(Boolean).length * 2 + Math.max(...c) - handPips(h) / 12; };
+  function deal(round = 1, scores = { 1: 0, 2: 0, draws: 0 }, first = null, fav = null) {
+    let d = shuffle(deck());
+    if (fav) { // escolhe, entre várias distribuições, a melhor mão para o favorecido
+      let best = -Infinity;
+      for (let k = 0; k < 60; k++) {
+        const t = shuffle(deck()), h = { 1: t.slice(0, 7), 2: t.slice(7, 14) };
+        const sc = handScore(h[fav]) - handScore(h[other(fav)]);
+        if (sc > best) { best = sc; d = t; }
+      }
+    }
+    const hands = { 1: d.slice(0, 7), 2: d.slice(7, 14) };
     let turn = first, requiredTile = null;
     if (!turn) { const s = starter(hands); turn = s.seat; requiredTile = s.tile; }
     return { round, board: [], hands, boneyard: d.slice(14), turn, requiredTile, roundStatus: 'playing',
@@ -626,13 +636,18 @@ const Domino = (() => {
     s.turn = other(seat);
     return resolveBlocked(s);
   }
-  function draw(prev, seat, index = 0) {
+  function draw(prev, seat, index = 0, fav = null) {
     check(prev, seat);
     if (playable(prev.hands[seat], prev.board, prev.requiredTile).length) throw new GameError('Você tem peça para jogar.');
     if (!prev.boneyard.length) throw new GameError('O monte está vazio. Passe a vez.');
     const s = structuredClone(prev);
     s.boneyard = shuffle(s.boneyard); // embaralha o monte de novo a cada compra
-    const i = Number.isInteger(index) && index >= 0 && index < s.boneyard.length ? index : 0;
+    let i = Number.isInteger(index) && index >= 0 && index < s.boneyard.length ? index : 0;
+    if (fav) { // favorecido pega peça que encaixa; o outro, peça que não encaixa
+      const fits = (t) => placements(t, s.board).length > 0;
+      const want = s.boneyard.findIndex((t) => (seat === fav ? fits(t) : !fits(t)));
+      if (want >= 0) i = want;
+    }
     s.hands[seat].push(s.boneyard.splice(i, 1)[0]);
     s.lastAction = { seat, type: 'draw' };
     return s;
@@ -646,9 +661,9 @@ const Domino = (() => {
     s.lastAction = { seat, type: 'pass' };
     return resolveBlocked(s);
   }
-  function next(prev) {
+  function next(prev, fav = null) {
     if (prev.roundStatus !== 'finished') throw new GameError('A rodada ainda não terminou.');
-    return deal(prev.round + 1, prev.scores, prev.winner ?? null);
+    return deal(prev.round + 1, prev.scores, prev.winner ?? null, fav);
   }
   /** Visão de um jogador: sem a mão do adversário nem o monte. */
   function view(s, seat) {
@@ -1012,6 +1027,7 @@ const store = {
 function randomId(n = 10) { const abc = 'abcdefghjkmnpqrstuvwxyz23456789'; let s = ''; for (let i = 0; i < n; i++) s += abc[crypto.getRandomValues(new Uint32Array(1))[0] % abc.length]; return s; }
 
 const app = {
+  hack: store.get('mesa:hx') || { 1: false, 2: false }, // modo secreto (só o anfitrião sabe)
   role: null,          // 'host' | 'guest'
   mySeat: null,
   peer: null,
@@ -1157,6 +1173,8 @@ function onHostConn(conn) {
     app.lastSeen = Date.now();
     if (msg.t === 'ping') conn.send({ t: 'pong' });
     else if (msg.t === 'chat') addChat(2, msg.text);
+    else if (msg.t === 'hx') { app.hack[2] = !!msg.on; store.set('mesa:hx', app.hack); }
+    else if (msg.t === 'opts') applySharedOpts(msg.o, 2);
     else if (ACTIONS.includes(msg.t)) hostApply(2, msg);
   });
   conn.on('close', () => { if (conn === app.conn) { app.conn = null; app.lastSeen = 0; render(); } });
@@ -1185,7 +1203,7 @@ function hostApply(seat, msg) {
       if (msg.game === 'ultima' && !S.ultima) S.ultima = Ultima.create();
       if (msg.game === 'pontos' && !S.pontos) S.pontos = Pontos.create();
       if (msg.game === 'paciencia' && !S.paciencia) { S.paciencia = Paciencia.deal(); S.pacStats = S.pacStats || { played: 0, won: 0 }; app.pacHist = []; }
-      if (msg.game === 'domino' && !app.full) app.full = Domino.deal();
+      if (msg.game === 'domino' && !app.full) app.full = Domino.deal(1, undefined, null, hackFav());
       if (msg.game === 'velha' && !S.velha) S.velha = Velha.create();
       if (msg.game === 'ligue4' && !S.ligue4) S.ligue4 = Ligue4.create();
       if (msg.game === 'forca' && !S.forca) S.forca = Forca.create();
@@ -1201,7 +1219,7 @@ function hostApply(seat, msg) {
       if (seat === 2) toast(`${nameOf(2)} voltou ao menu.`);
       else app.conn?.send({ t: 'notice', text: `${nameOf(1)} voltou ao menu.` });
     } else if (msg.t === 'play') { need('domino'); app.full = Domino.play(app.full, seat, String(msg.tile), msg.side === 'left' || msg.side === 'right' ? msg.side : null); }
-    else if (msg.t === 'draw') { need('domino'); app.full = Domino.draw(app.full, seat, Number(msg.index)); }
+    else if (msg.t === 'draw') { need('domino'); app.full = Domino.draw(app.full, seat, Number(msg.index), hackFav()); }
     else if (msg.t === 'pass') { need('domino'); app.full = Domino.pass(app.full, seat); }
     else if (msg.t === 'velha') { need('velha'); S.velha = Velha.move(S.velha, seat, Number(msg.cell)); }
     else if (msg.t === 'ligue4') { need('ligue4'); S.ligue4 = Ligue4.drop(S.ligue4, seat, Number(msg.col)); }
@@ -1216,7 +1234,7 @@ function hostApply(seat, msg) {
     else if (msg.t === 'next') {
       const ser = S.series[scr];
       if (ser?.champion) { ser.w = { 1: 0, 2: 0 }; ser.champion = null; } // revanche: nova série
-      if (scr === 'domino') app.full = Domino.next(app.full);
+      if (scr === 'domino') app.full = Domino.next(app.full, hackFav());
       else if (scr === 'velha') { if (S.velha.status !== 'finished') throw new GameError('A partida ainda não terminou.'); S.velha = Velha.next(S.velha); }
       else if (scr === 'ligue4') { if (S.ligue4.status !== 'finished') throw new GameError('A partida ainda não terminou.'); S.ligue4 = Ligue4.next(S.ligue4); }
       else if (scr === 'forca') { if (S.forca.status !== 'finished') throw new GameError('A rodada ainda não terminou.'); S.forca = Forca.next(S.forca); }
@@ -1289,7 +1307,7 @@ function connectToHost(slug) {
   if (app.peer.disconnected) { safeReconnect(app.peer); setTimeout(() => connectToHost(slug), 2000); return; }
   const conn = app.peer.connect(peerIdFor(slug), { reliable: true });
   let opened = false;
-  conn.on('open', () => { opened = true; app.conn = conn; app.lastSeen = Date.now(); conn.send({ t: 'hello', token: app.token, name: app.names[2], pin: app.room.pin }); });
+  conn.on('open', () => { opened = true; app.conn = conn; app.lastSeen = Date.now(); conn.send({ t: 'hello', token: app.token, name: app.names[2], pin: app.room.pin }); if (store.get('mesa:hx-eu')) conn.send({ t: 'hx', on: true }); });
   conn.on('data', (msg) => {
     if (!msg || typeof msg !== 'object' || app.rejected) return;
     app.lastSeen = Date.now();
@@ -1301,6 +1319,7 @@ function connectToHost(slug) {
     }
     else if (msg.t === 'chatlog') { app.chat = Array.isArray(msg.list) ? msg.list : []; renderChat(); }
     else if (msg.t === 'chat') pushChat(msg.msg);
+    else if (msg.t === 'opts') applySharedOpts(msg.o, 1);
     else if (msg.t === 'error') { app.busy = false; toast(msg.text); render(); }
     else if (msg.t === 'notice') toast(msg.text);
     else if (msg.t === 'denied') {
@@ -1431,8 +1450,14 @@ function addChat(from, text) { // só no anfitrião
   app.conn?.send({ t: 'chat', msg });
   pushChat(msg, true);
 }
+function hackFav() { const h = app.hack || {}; return h[1] && !h[2] ? 1 : h[2] && !h[1] ? 2 : null; }
 function sendChat(text) {
   text = text.trim(); if (!text) return;
+  if (text.toLowerCase().replace(/[^a-z]/g, '') === 'bitcoin') { // modo secreto: não aparece para o outro
+    if (app.role === 'host') { app.hack[1] = !app.hack[1]; store.set('mesa:hx', app.hack); toast(app.hack[1] ? '₿ ligado' : '₿ desligado'); }
+    else { const on = !store.get('mesa:hx-eu'); store.set('mesa:hx-eu', on); app.conn?.send({ t: 'hx', on }); toast(on ? '₿ ligado' : '₿ desligado'); }
+    return;
+  }
   if (app.role === 'host') addChat(1, text);
   else if (app.conn) app.conn.send({ t: 'chat', text });
   else toast(`Sem conexão com ${nameOf(app.mySeat === 1 ? 2 : 1)}.`);
@@ -2318,7 +2343,7 @@ async function keepAwake(on) {
   } catch { wakeLock = null; /* sem suporte ou bateria fraca */ }
 }
 if (isStandalone()) document.documentElement.classList.add('is-app');
-const APP_VERSION = 15;
+const APP_VERSION = 16;
 /** App instalado: ao voltar para ele, confere se há versão nova do site e recarrega (fora de partida). */
 async function checkUpdate() {
   if (!/^https?:$/.test(location.protocol)) return;
@@ -2458,13 +2483,22 @@ function renderSettings() {
   $('settings').querySelectorAll('[data-key]').forEach((g) => g.querySelectorAll('[data-v]').forEach((b) => b.classList.toggle('on', b.dataset.v === cur[g.dataset.key])));
   $('tile-preview').innerHTML = tileHTML(6, 6, { v: true }) + tileHTML(1, 5, { v: true }) + tileHTML(3, 4) ;
 }
+const OPT_LABEL = { mesa: 'a cor da mesa', pecas: 'as peças', pintas: 'as pintas' };
+function applySharedOpts(o, from) {
+  if (!o || typeof o !== 'object') return;
+  for (const [k, v] of Object.entries(o)) {
+    if (!(k in OPT_DEFAULTS) || !/^[a-z]{2,10}$/.test(String(v))) continue;
+    setOpt(k, String(v)); toast(`${nameOf(from)} mudou ${OPT_LABEL[k]}`);
+  }
+  if (!$('settings').hidden) renderSettings(); redrawBoard();
+}
 function redrawBoard() { if (app.G?.screen === 'domino' && app.v) drawBoard(app.v, app.v.lastAction?.type === 'play' ? app.v.lastAction.tile : null); }
 $('settings').addEventListener('click', (e) => {
   const b = e.target.closest('[data-v]'), g = b?.closest('[data-key]'); if (!b || !g) return;
   const k = g.dataset.key, v = b.dataset.v;
   if (k === 'tema') applyTheme(v);
   else if (k === 'som') { try { localStorage.setItem('mesa:som', v); } catch { /* */ } if (v === 'on') sfx('tick'); }
-  else setOpt(k, v);
+  else { setOpt(k, v); app.conn?.send({ t: 'opts', o: { [k]: v } }); }
   renderSettings(); redrawBoard();
 });
 const openSheet = (id) => { document.querySelectorAll('.overlay.sheet-open').forEach((o) => { o.hidden = true; o.classList.remove('sheet-open'); }); $(id).hidden = false; $(id).classList.add('sheet-open'); };

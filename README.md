@@ -7,6 +7,8 @@ dados e sem cadastro.
 
 **⚙️ Ajustes** (na tela inicial ou no menu): tema claro/escuro, som, cor da mesa (verde, azul, vinho, madeira,
 grafite), peças do dominó (branca, marfim, preta) e pintas coloridas ou de uma cor só.
+Cor da mesa, peças e pintas valem para os dois: quando um muda, muda na tela do outro também
+(tema e som são de cada um).
 
 **🏆 Ranking** (no menu): junta todas as partidas de todos os jogos — você e cada adversário ordenados por vitórias,
 mais uma tabela das suas partidas por jogo. Fica salvo no aparelho; dá para zerar (dois toques).
