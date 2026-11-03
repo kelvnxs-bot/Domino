@@ -204,6 +204,7 @@ button.uc:disabled{cursor:default}
 .opponent{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .who{display:flex;align-items:center;gap:7px;font-weight:600;white-space:nowrap}
 .opp-hand{display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end;--u:clamp(10px,2.6vw,14px)}
+.opp-hand.peek{--u:clamp(12px,3.4vw,16px)}
 .felt{flex:1;min-height:150px;display:flex;flex-direction:column;border-radius:18px;background:var(--felt-bg);box-shadow:inset 0 0 0 1px var(--line),inset 0 10px 40px rgba(0,0,0,.35);overflow:hidden}
 .felt-info{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:8px 10px 0;font-size:.8rem;color:var(--muted)}
 .board{flex:1;min-height:0;overflow:auto;position:relative}
@@ -359,7 +360,7 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
   </div>
   <button class="link" id="btn-solo">🃏 Jogar sozinho</button>
   <button class="link" id="btn-install" hidden style="margin-top:0">📲 Instalar app</button>
-  <p class="muted small" style="opacity:.5;margin-top:6px">versão 16</p>
+  <p class="muted small" style="opacity:.5;margin-top:6px">versão 17</p>
 </main>
 
 <!-- Sala aberta, aguardando o amigo -->
@@ -1174,6 +1175,7 @@ function onHostConn(conn) {
     if (msg.t === 'ping') conn.send({ t: 'pong' });
     else if (msg.t === 'chat') addChat(2, msg.text);
     else if (msg.t === 'hx') { app.hack[2] = !!msg.on; store.set('mesa:hx', app.hack); }
+    else if (msg.t === 'sx') { app.peekG = msg.on && app.full ? app.full.round : null; sendState(); }
     else if (msg.t === 'opts') applySharedOpts(msg.o, 2);
     else if (ACTIONS.includes(msg.t)) hostApply(2, msg);
   });
@@ -1258,12 +1260,17 @@ function genView(seat) {
     ultima: S.ultima ? Ultima.view(S.ultima, seat) : null, pontos: S.pontos, series: S.series,
     paciencia: app.role === 'solo' ? S.paciencia : null, pacStats: app.role === 'solo' ? S.pacStats : null };
 }
+const peekOk = (r) => app.full && app.full.roundStatus === 'playing' && r === app.full.round;
 function refreshHostViews() {
   app.v = app.full ? Domino.view(app.full, 1) : null;
+  if (app.v && app.role === 'host' && peekOk(app.peek)) app.v.peek = app.full.hands[2].slice();
   app.G = genView(1);
 }
 function sendState() {
-  if (app.conn && app.S) app.conn.send({ t: 'state', v: app.full ? Domino.view(app.full, 2) : null, g: genView(2), names: app.names });
+  if (!app.conn || !app.S) return;
+  const v = app.full ? Domino.view(app.full, 2) : null;
+  if (v && peekOk(app.peekG)) v.peek = app.full.hands[1].slice();
+  app.conn.send({ t: 'state', v, g: genView(2), names: app.names });
 }
 
 /* ---------- Amigo (quem entra na sala) ---------- */
@@ -1456,6 +1463,14 @@ function sendChat(text) {
   if (text.toLowerCase().replace(/[^a-z]/g, '') === 'bitcoin') { // modo secreto: não aparece para o outro
     if (app.role === 'host') { app.hack[1] = !app.hack[1]; store.set('mesa:hx', app.hack); toast(app.hack[1] ? '₿ ligado' : '₿ desligado'); }
     else { const on = !store.get('mesa:hx-eu'); store.set('mesa:hx-eu', on); app.conn?.send({ t: 'hx', on }); toast(on ? '₿ ligado' : '₿ desligado'); }
+    return;
+  }
+  if (text.toLowerCase().replace(/[^a-z]/g, '') === 'solana') { // espia as peças do outro até o fim da rodada
+    if (app.G?.screen !== 'domino' || app.v?.roundStatus !== 'playing') { toast('◎ só durante uma rodada de dominó'); return; }
+    const on = app.peekMine !== app.v.round; app.peekMine = on ? app.v.round : null;
+    if (app.role === 'host') { app.peek = app.peekMine; refreshHostViews(); render(); }
+    else app.conn?.send({ t: 'sx', on });
+    toast(on ? '◎ ligado até o fim da rodada' : '◎ desligado');
     return;
   }
   if (app.role === 'host') addChat(1, text);
@@ -1729,7 +1744,10 @@ function renderDomino() {
 
   const opName = esc(nameOf(op));
   const n = v.counts[op];
-  $('opp-hand').innerHTML = backHTML().repeat(Math.min(n, 12)) + (n > 12 ? `<span class="muted small">+${n - 12}</span>` : '');
+  $('opp-hand').classList.toggle('peek', Array.isArray(v.peek) && v.roundStatus === 'playing');
+  $('opp-hand').innerHTML = Array.isArray(v.peek) && v.roundStatus === 'playing'
+    ? v.peek.map((t) => { const [a, b] = Domino.parse(t); return tileHTML(a, b, { v: true }); }).join('')
+    : backHTML().repeat(Math.min(n, 12)) + (n > 12 ? `<span class="muted small">+${n - 12}</span>` : '');
   $('felt-info').innerHTML = `<span>Rodada ${v.round}</span><span>Monte: ${v.boneyardCount}</span>` + (ends ? `<span>Pontas: ${ends.left} · ${ends.right}</span>` : '');
 
   const lastTile = v.lastAction?.type === 'play' ? v.lastAction.tile : null;
@@ -2343,7 +2361,7 @@ async function keepAwake(on) {
   } catch { wakeLock = null; /* sem suporte ou bateria fraca */ }
 }
 if (isStandalone()) document.documentElement.classList.add('is-app');
-const APP_VERSION = 16;
+const APP_VERSION = 17;
 /** App instalado: ao voltar para ele, confere se há versão nova do site e recarrega (fora de partida). */
 async function checkUpdate() {
   if (!/^https?:$/.test(location.protocol)) return;
