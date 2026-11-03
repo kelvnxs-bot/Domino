@@ -168,6 +168,11 @@ button.uc:disabled{cursor:default}
 .pc.down{background:repeating-linear-gradient(45deg,#1e5aa8 0 5px,#2a6cc4 5px 10px);border:2px solid #fff;cursor:default}
 .pc.sel{box-shadow:0 0 0 3px var(--accent),0 4px 10px rgba(0,0,0,.5);z-index:2}
 .pac-col.target::after,.pac-slot.target::after{content:'';position:absolute;inset:-3px;border-radius:calc(var(--cw)*.12);box-shadow:0 0 0 3px #5be37d;pointer-events:none}
+.pac .pc[data-src]{touch-action:none;cursor:grab}
+.pac .pc.lifting{opacity:.25}
+.pac-ghost{position:fixed;z-index:50;pointer-events:none;filter:drop-shadow(0 14px 18px rgba(0,0,0,.45))}
+.pac-ghost .pc{position:absolute;left:0;transform:none}
+.pac-col.drop-here::after,.pac-slot.drop-here::after{box-shadow:0 0 0 4px #5be37d,0 0 18px #5be37d}
 .pac-bar{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:auto;padding-top:8px}
 .pac-bar .info{color:var(--muted);font-size:.85rem;margin-right:auto}
 .pts{width:min(92vw,440px);height:auto;touch-action:manipulation;user-select:none}
@@ -360,7 +365,7 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
   </div>
   <button class="link" id="btn-solo">🃏 Jogar sozinho</button>
   <button class="link" id="btn-install" hidden style="margin-top:0">📲 Instalar app</button>
-  <p class="muted small" style="opacity:.5;margin-top:6px">versão 17</p>
+  <p class="muted small" style="opacity:.5;margin-top:6px">versão 18</p>
 </main>
 
 <!-- Sala aberta, aguardando o amigo -->
@@ -2168,6 +2173,57 @@ $('t-paciencia').addEventListener('click', (e) => {
   if (best) pacDo((s) => Paciencia.move(s, src, best));
   else { app.pacSel = src; render(); } // mais de um lugar: toque no destino
 });
+/* arrastar carta (ou pilha) com o dedo/mouse */
+const pdrag = { on: false };
+function pacDropAt(x, y) {
+  const el = document.elementFromPoint(x, y);
+  const f = el?.closest('#t-paciencia [data-fslot]'), c = el?.closest('#t-paciencia [data-col]');
+  return f ? { type: 'found', el: f } : c ? { type: 'tab', col: Number(c.dataset.col), el: c } : null;
+}
+const pacOk = (tg, to) => to && tg.some((x) => x.type === to.type && (to.type === 'found' || x.col === to.col));
+$('t-paciencia').addEventListener('pointerdown', (e) => {
+  const st = app.S?.paciencia, el = e.target.closest('.pc[data-src]');
+  if (!st || !el || st.status !== 'playing' || app.pacAuto || e.button > 0) return;
+  const src = pacParse(el.dataset.src);
+  Object.assign(pdrag, { on: true, moved: false, src, el, x0: e.clientX, y0: e.clientY, id: e.pointerId, ghost: null, cards: [], tg: Paciencia.targets(st, src) });
+});
+document.addEventListener('pointermove', (e) => {
+  if (!pdrag.on || e.pointerId !== pdrag.id) return;
+  if (!pdrag.moved) {
+    if (Math.hypot(e.clientX - pdrag.x0, e.clientY - pdrag.y0) < 8) return;
+    pdrag.moved = true; app.pacSel = null;
+    const { src, el } = pdrag, r0 = el.getBoundingClientRect();
+    pdrag.cards = src.type === 'tab'
+      ? [...el.parentElement.querySelectorAll('.pc[data-src]')].filter((c) => Number(c.dataset.src.split(':')[2]) >= src.idx) : [el];
+    const g = document.createElement('div'); g.className = 'pac-ghost';
+    g.style.cssText += `;width:${r0.width}px;--cw:${getComputedStyle($('t-paciencia')).getPropertyValue('--cw')}`;
+    for (const c of pdrag.cards) { const k = c.cloneNode(true); k.classList.remove('sel'); k.style.top = (c.getBoundingClientRect().top - r0.top) + 'px'; g.appendChild(k); c.classList.add('lifting'); }
+    document.body.appendChild(g); pdrag.ghost = g; pdrag.dx = e.clientX - r0.left; pdrag.dy = e.clientY - r0.top;
+    document.querySelectorAll('#t-paciencia .target').forEach((t) => t.classList.remove('target'));
+    for (const t of pdrag.tg) {
+      if (t.type === 'found') document.querySelectorAll('#t-paciencia [data-fslot]').forEach((f) => f.classList.add('target'));
+      else document.querySelector(`#t-paciencia [data-col="${t.col}"]`)?.classList.add('target');
+    }
+  }
+  e.preventDefault();
+  pdrag.ghost.style.left = (e.clientX - pdrag.dx) + 'px'; pdrag.ghost.style.top = (e.clientY - pdrag.dy) + 'px';
+  const to = pacDropAt(e.clientX, e.clientY);
+  document.querySelectorAll('#t-paciencia .drop-here').forEach((t) => t.classList.remove('drop-here'));
+  if (pacOk(pdrag.tg, to)) to.el.classList.add('drop-here');
+}, { passive: false });
+function pacEndDrag(e) {
+  if (!pdrag.on || (e && e.pointerId !== pdrag.id)) return;
+  const was = pdrag.moved; pdrag.on = false;
+  if (!was) return;
+  pdrag.suppress = true; setTimeout(() => { pdrag.suppress = false; }, 0);
+  pdrag.ghost?.remove();
+  const to = e && e.type === 'pointerup' ? pacDropAt(e.clientX, e.clientY) : null;
+  if (pacOk(pdrag.tg, to)) { const src = pdrag.src; pacDo((s) => Paciencia.move(s, src, to.type === 'found' ? { type: 'found' } : { type: 'tab', col: to.col })); }
+  else render();
+}
+document.addEventListener('pointerup', pacEndDrag);
+document.addEventListener('pointercancel', pacEndDrag);
+$('t-paciencia').addEventListener('click', (e) => { if (pdrag.suppress) { e.stopImmediatePropagation(); pdrag.suppress = false; } }, true);
 window.addEventListener('resize', () => { if (app.G?.screen === 'paciencia') renderPac(); });
 
 /* ---------- Eventos ---------- */
@@ -2361,7 +2417,7 @@ async function keepAwake(on) {
   } catch { wakeLock = null; /* sem suporte ou bateria fraca */ }
 }
 if (isStandalone()) document.documentElement.classList.add('is-app');
-const APP_VERSION = 17;
+const APP_VERSION = 18;
 /** App instalado: ao voltar para ele, confere se há versão nova do site e recarrega (fora de partida). */
 async function checkUpdate() {
   if (!/^https?:$/.test(location.protocol)) return;

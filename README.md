@@ -53,7 +53,7 @@ Na tela inicial, **🃏 Jogar sozinho** abre um menu com:
   jogador de verdade enxerga: a própria mão, a mesa, quantas peças você tem e quando você comprou ou passou.
   Prefere bater, soltar peças pesadas e carroças cedo e deixar na mesa números que você não tem
   (vence cerca de 60% contra jogadores simples — dá para ganhar dele).
-- **Paciência** (clássica, compra de 1 carta) — toque numa carta e ela vai sozinha para o lugar certo;
+- **Paciência** (clássica, compra de 1 carta) — arraste a carta (ou a pilha) até onde quer, ou toque nela e ela vai sozinha para o lugar certo;
   se houver mais de um lugar possível, os destinos ficam marcados em verde e você toca no escolhido.
   Toque no monte para virar cartas. Tem **Desfazer**, **Nova partida** (pede confirmação) e **Terminar**,
   que sobe tudo para as fundações quando todas as cartas já estão viradas. Conta vitórias e partidas.
