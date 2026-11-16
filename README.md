@@ -5,7 +5,7 @@ Jogos para dois pelo celular ou computador: gere o número da sala, passe para u
 que continua o mesmo em todos os jogos. O jogo inteiro é o `index.html`, sem servidor próprio, sem banco de
 dados e sem cadastro.
 
-**⚙️ Ajustes** (na tela inicial ou no menu): tema claro/escuro, som, cor da mesa (verde, azul, vinho, madeira,
+**⚙️ Ajustes** (na tela inicial ou no menu): visual (vidro verde, vidro escuro, colorido ou clássico), tema claro/escuro, som, cor da mesa (verde, azul, vinho, madeira,
 grafite), peças do dominó (branca, marfim, preta) e pintas coloridas ou de uma cor só.
 Cor da mesa, peças e pintas valem para os dois: quando um muda, muda na tela do outro também
 (tema e som são de cada um).

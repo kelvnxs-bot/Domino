@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#0b3326" />
-<script>try{if(localStorage.getItem('mesa:tema')==='light')document.documentElement.dataset.theme='light';var o=JSON.parse(localStorage.getItem('mesa:ajustes')||'{}');for(var k in o)document.documentElement.dataset[k]=o[k]}catch(e){}</script>
+<script>try{if(localStorage.getItem('mesa:tema')==='light')document.documentElement.dataset.theme='light';var o=JSON.parse(localStorage.getItem('mesa:ajustes')||'{}');if(!o.look)o.look='verde';for(var k in o)document.documentElement.dataset[k]=o[k]}catch(e){}</script>
 <title>Mesa de Jogos</title>
 <link rel="manifest" href="/manifest.webmanifest" />
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
@@ -57,7 +57,6 @@ button{font:inherit;color:inherit}[hidden]{display:none!important}
 .screen{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;text-align:center}
 h1{font-size:clamp(2rem,7vw,3rem);margin:14px 0 6px;letter-spacing:-.02em}
 .lead{color:var(--muted);margin:0 0 22px;max-width:34ch}
-.hero{display:flex;gap:10px;--u:30px}.hero .tile:first-child{transform:rotate(-10deg)}.hero .tile:last-child{transform:rotate(8deg) translateY(4px)}
 .invite{display:flex;gap:8px;margin:10px 0}
 .invite input,.chat-form input{flex:1;min-width:0;background:var(--sunk);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:10px 12px;font-size:16px}
 input:focus{outline:2px solid var(--accent);outline-offset:1px}
@@ -287,7 +286,7 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
 .btn.primary:hover:not(:disabled){background:#f2cf6e}
 .room-code{font-size:2.8rem;font-weight:800;letter-spacing:.25em;margin:0 0 12px;color:var(--accent)}
 .pin-input::placeholder{letter-spacing:normal;font-weight:400;font-size:1rem}
-#home h1{margin-bottom:22px}
+#home .logo{width:min(54vw,210px);height:auto;margin:6px 0 18px;filter:drop-shadow(0 12px 28px rgba(0,0,0,.45))}
 .or{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--muted);font-size:.85rem}
 .or::before,.or::after{content:'';flex:1;height:1px;background:var(--line)}
 .join-row{display:flex;gap:8px}
@@ -309,7 +308,7 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
 .opt.col{flex-direction:column;align-items:stretch}
 .opt>span{font-weight:600}
 .seg{display:inline-flex;background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
-.seg.wide{display:flex}.seg.wide button{flex:1}
+.seg.wide{display:flex}.seg.wide button{flex:1}.seg.wide button{padding:7px 6px;white-space:nowrap}
 .seg button{border:0;background:none;padding:7px 12px;border-radius:8px;cursor:pointer;font-weight:600;color:var(--muted)}
 .seg button.on{background:var(--accent);color:var(--accent-ink)}
 .swatches{display:flex;gap:10px;flex-wrap:wrap}
@@ -343,6 +342,66 @@ a.btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box
 :root[data-pecas="preta"] .pip.c4{--pc:#a1887f}:root[data-pecas="preta"] .pip.c6{--pc:#b05ad0}:root[data-pecas="preta"] .pip.c1{--pc:#42a5f5}
 html,body{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 input,textarea,select{font-size:max(16px,1em)}
+/* ---------- celular deitado ---------- */
+@media (orientation:landscape) and (max-height:520px){
+  .topbar{padding-top:4px;padding-bottom:4px;padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+  .series-bar{padding:2px 10px;font-size:.78rem}
+  #t-domino{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,38%);grid-template-rows:auto minmax(0,1fr);gap:6px 12px;padding:6px max(10px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));max-width:none}
+  #t-domino .felt{grid-column:1;grid-row:1 / span 2;min-height:0}
+  #t-domino .opponent{grid-column:2;grid-row:1}
+  #t-domino .me{grid-column:2;grid-row:2;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;min-height:0;overflow:auto}
+  #t-domino .turn{padding:6px 8px;font-size:.9rem}
+  #t-domino .hand{--u:clamp(17px,5.4vh,24px);gap:4px;padding:2px}
+  #t-domino .monte-tiles{width:100%;height:96px;--u:11px;flex:none}
+  #t-domino .monte{gap:0}
+  .velha{width:min(70vh,330px);height:min(70vh,330px)}
+}
+/* ===================== LIQUID GLASS ===================== */
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]){--glass:rgba(255,255,255,.07);--glass-2:rgba(255,255,255,.12);--glass-line:rgba(255,255,255,.16);--glass-hi:rgba(255,255,255,.28);--glass-sh:rgba(0,0,0,.35);--blur:blur(22px) saturate(180%)}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) body{background:var(--look-bg) fixed;background-color:var(--felt-3)}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .panel,:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .topbar,:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .series-bar,:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .turn,:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .chat,:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .opponent,:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .card,:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .theme-btn,:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .bubble{
+  background:var(--glass);border:1px solid var(--glass-line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+  box-shadow:inset 0 1px 0 var(--glass-hi),inset 0 -1px 0 rgba(255,255,255,.04),0 10px 30px var(--glass-sh)}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .panel{border-radius:26px}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .card{border-radius:24px}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .topbar{margin:8px 10px 0;margin-top:max(8px,env(safe-area-inset-top));border-radius:22px;padding:8px 12px}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .series-bar{margin:6px auto 0;border-radius:999px;width:max-content;max-width:calc(100% - 20px);padding:4px 14px}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .opponent{border-radius:18px;padding:6px 12px}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .turn{border-radius:16px}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .turn.mine{background:linear-gradient(135deg,rgba(255,214,110,.22),rgba(255,214,110,.08));box-shadow:inset 0 1px 0 rgba(255,240,200,.45),inset 0 0 0 1px rgba(255,214,110,.35)}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .btn{border-radius:999px;padding:8px 16px;font-size:.92rem;background:var(--glass-2);border:1px solid var(--glass-line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:inset 0 1px 0 var(--glass-hi)}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .btn.big{padding:11px;font-size:.98rem}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .btn.primary{background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(225,228,235,.85));color:#0b0d10;border-color:rgba(255,255,255,.6);box-shadow:inset 0 1px 0 #fff,0 6px 20px rgba(255,255,255,.12)}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .btn.wa{background:linear-gradient(180deg,#3be07a,#20b85c);color:#04220f;border-color:rgba(255,255,255,.35)}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .felt{border-radius:26px;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 0 0 1px rgba(255,255,255,.1),inset 0 18px 50px rgba(0,0,0,.45),0 12px 30px rgba(0,0,0,.4)}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .name-input,:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .chat-form input,:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .invite input{background:rgba(255,255,255,.06);border:1px solid var(--glass-line);border-radius:14px}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .seg{border-radius:999px}:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .seg button{border-radius:999px}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]) .overlay{background:rgba(0,0,0,.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+/* A — vidro escuro */
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]):not([data-theme="light"])[data-look="escuro"]{--felt-1:#0a0c0e;--felt-2:#07090a;--felt-3:#050607;--muted:#9aa4ad;--panel:rgba(14,16,18,.82);--chat-bg:rgba(10,12,14,.92);
+  --look-bg:radial-gradient(40% 35% at 15% 10%,rgba(30,140,110,.35),transparent 70%),radial-gradient(35% 30% at 90% 85%,rgba(40,90,170,.30),transparent 70%),#050607;
+  --felt-bg:radial-gradient(ellipse at center,rgba(255,255,255,.06),rgba(255,255,255,.015))}
+/* B — vidro colorido */
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]):not([data-theme="light"])[data-look="colorido"]{--felt-1:#0b0716;--felt-2:#08060f;--felt-3:#05040a;--muted:#b8b2d6;--panel:rgba(16,12,28,.82);--chat-bg:rgba(12,9,22,.92);--glass:rgba(255,255,255,.09);--glass-line:rgba(255,255,255,.22);--glass-hi:rgba(255,255,255,.42);
+  --look-bg:radial-gradient(38% 30% at 10% 15%,rgba(160,80,255,.55),transparent 70%),radial-gradient(36% 30% at 95% 30%,rgba(0,190,255,.45),transparent 70%),radial-gradient(40% 32% at 40% 95%,rgba(255,80,150,.40),transparent 70%),#06050b;
+  --felt-bg:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03))}
+/* C — vidro na mesa verde */
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"]):not([data-theme="light"])[data-look="verde"]{--felt-1:#0d3b2c;--felt-2:#082319;--felt-3:#04120d;--muted:#a6c9b9;--panel:rgba(8,32,24,.82);
+  --look-bg:radial-gradient(45% 35% at 20% 0%,rgba(80,220,160,.30),transparent 70%),radial-gradient(40% 35% at 85% 100%,rgba(240,200,96,.18),transparent 70%),linear-gradient(180deg,#0a2a1f,#04120d);
+  --felt-bg:radial-gradient(ellipse at center,rgba(40,140,95,.55),rgba(10,60,40,.55))}
+/* tema claro com vidro */
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-theme="light"]{--glass:rgba(255,255,255,.55);--glass-2:rgba(255,255,255,.7);--glass-line:rgba(0,0,0,.08);--glass-hi:rgba(255,255,255,.95);--glass-sh:rgba(40,50,70,.12)}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-theme="light"][data-look="escuro"]{--look-bg:radial-gradient(40% 35% at 15% 10%,rgba(60,190,150,.35),transparent 70%),radial-gradient(35% 30% at 90% 85%,rgba(90,140,230,.32),transparent 70%),#eef1f3}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-theme="light"][data-look="colorido"]{--look-bg:radial-gradient(38% 30% at 10% 15%,rgba(180,120,255,.45),transparent 70%),radial-gradient(36% 30% at 95% 30%,rgba(60,200,255,.40),transparent 70%),radial-gradient(40% 32% at 40% 95%,rgba(255,120,170,.38),transparent 70%),#f4f2f8}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-theme="light"][data-look="verde"]{--look-bg:radial-gradient(45% 35% at 20% 0%,rgba(80,200,140,.35),transparent 70%),radial-gradient(40% 35% at 85% 100%,rgba(240,200,96,.28),transparent 70%),#eef4f0}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-theme="light"] .btn.primary{background:linear-gradient(180deg,#22262b,#0e1013);color:#fff;border-color:rgba(0,0,0,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 6px 18px rgba(0,0,0,.18)}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-theme="light"] .name-input,:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-theme="light"] .chat-form input,:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-theme="light"] .invite input{background:rgba(255,255,255,.6)}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-theme="light"] .overlay{background:rgba(30,40,50,.25)}
+/* cor da mesa escolhida nos ajustes vale só para a mesa do jogo */
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-mesa="azul"]{--felt-bg:radial-gradient(ellipse at center,rgba(50,110,180,.6),rgba(20,50,95,.6))}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-mesa="vinho"]{--felt-bg:radial-gradient(ellipse at center,rgba(140,40,60,.6),rgba(70,15,30,.6))}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-mesa="madeira"]{--felt-bg:radial-gradient(ellipse at center,rgba(150,100,55,.65),rgba(90,55,25,.65))}
+:root:is([data-look="escuro"],[data-look="colorido"],[data-look="verde"])[data-mesa="grafite"]{--felt-bg:radial-gradient(ellipse at center,rgba(90,96,102,.55),rgba(35,38,42,.6))}
 .banner{background:rgba(232,193,90,.15);color:var(--accent);text-align:center;padding:6px;font-size:.85rem}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -352,8 +411,7 @@ input,textarea,select{font-size:max(16px,1em)}
 <!-- Tela inicial -->
 <main id="home" class="screen" hidden>
   <button class="theme-btn" data-open-settings aria-label="Ajustes">⚙️</button>
-  <div class="hero" id="hero"></div>
-  <h1>Mesa de Jogos</h1>
+  <img class="logo" src="icons/logo.png" alt="Mesa de Jogos" width="512" height="512" />
   <div class="panel">
     <input class="name-input" id="my-name" maxlength="20" placeholder="Seu nome" autocomplete="nickname" />
     <form id="join-form" class="join-row" autocomplete="off">
@@ -367,7 +425,7 @@ input,textarea,select{font-size:max(16px,1em)}
   </div>
   <button class="link" id="btn-solo">🃏 Jogar sozinho</button>
   <button class="link" id="btn-install" hidden style="margin-top:0">📲 Instalar app</button>
-  <p class="muted small" style="opacity:.5;margin-top:6px">versão 19</p>
+  <p class="muted small" style="opacity:.5;margin-top:6px">versão 20</p>
 </main>
 
 <!-- Sala aberta, aguardando o amigo -->
@@ -517,6 +575,7 @@ input,textarea,select{font-size:max(16px,1em)}
 <div class="overlay" id="settings" hidden>
   <div class="panel sheet">
     <div class="sheet-head"><h2>Ajustes</h2><button class="chat-close" data-close-sheet aria-label="Fechar">×</button></div>
+    <div class="opt col"><span>Visual <small class="muted">(vidro)</small></span><div class="seg wide" data-key="look"><button data-v="classico">Clássico</button><button data-v="escuro">Escuro</button><button data-v="colorido">Colorido</button><button data-v="verde">Verde</button></div></div>
     <div class="opt"><span>Tema</span><div class="seg" data-key="tema"><button data-v="dark">Escuro</button><button data-v="light">Claro</button></div></div>
     <div class="opt"><span>Som</span><div class="seg" data-key="som"><button data-v="on">Ligado</button><button data-v="off">Desligado</button></div></div>
     <div class="opt col"><span>Cor da mesa</span><div class="swatches" data-key="mesa">
@@ -2419,7 +2478,7 @@ async function keepAwake(on) {
   } catch { wakeLock = null; /* sem suporte ou bateria fraca */ }
 }
 if (isStandalone()) document.documentElement.classList.add('is-app');
-const APP_VERSION = 19;
+const APP_VERSION = 20;
 /** App instalado: ao voltar para ele, confere se há versão nova do site e recarrega (fora de partida). */
 async function checkUpdate() {
   if (!/^https?:$/.test(location.protocol)) return;
@@ -2552,7 +2611,8 @@ document.addEventListener('wheel', (e) => { if (e.ctrlKey) e.preventDefault(); }
 document.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && ['+', '-', '=', '0'].includes(e.key)) e.preventDefault(); });
 
 /* ---------- Ajustes ---------- */
-const OPT_DEFAULTS = { mesa: 'verde', pecas: 'branca', pintas: 'cores' };
+const OPT_DEFAULTS = { mesa: 'verde', pecas: 'branca', pintas: 'cores', look: 'verde' };
+const SHARED_OPTS = ['mesa', 'pecas', 'pintas'];
 function getOpts() { try { return { ...OPT_DEFAULTS, ...JSON.parse(localStorage.getItem('mesa:ajustes') || '{}') }; } catch { return { ...OPT_DEFAULTS }; } }
 function setOpt(k, v) {
   const o = getOpts(); o[k] = v;
@@ -2569,7 +2629,7 @@ const OPT_LABEL = { mesa: 'a cor da mesa', pecas: 'as peças', pintas: 'as pinta
 function applySharedOpts(o, from) {
   if (!o || typeof o !== 'object') return;
   for (const [k, v] of Object.entries(o)) {
-    if (!(k in OPT_DEFAULTS) || !/^[a-z]{2,10}$/.test(String(v))) continue;
+    if (!SHARED_OPTS.includes(k) || !/^[a-z]{2,10}$/.test(String(v))) continue;
     setOpt(k, String(v)); toast(`${nameOf(from)} mudou ${OPT_LABEL[k]}`);
   }
   if (!$('settings').hidden) renderSettings(); redrawBoard();
@@ -2580,7 +2640,7 @@ $('settings').addEventListener('click', (e) => {
   const k = g.dataset.key, v = b.dataset.v;
   if (k === 'tema') applyTheme(v);
   else if (k === 'som') { try { localStorage.setItem('mesa:som', v); } catch { /* */ } if (v === 'on') sfx('tick'); }
-  else { setOpt(k, v); app.conn?.send({ t: 'opts', o: { [k]: v } }); }
+  else { setOpt(k, v); if (SHARED_OPTS.includes(k)) app.conn?.send({ t: 'opts', o: { [k]: v } }); }
   renderSettings(); redrawBoard();
 });
 const openSheet = (id) => { document.querySelectorAll('.overlay.sheet-open').forEach((o) => { o.hidden = true; o.classList.remove('sheet-open'); }); $(id).hidden = false; $(id).classList.add('sheet-open'); };
@@ -2634,7 +2694,6 @@ function renderRank() {
 
 /* ---------- Início ---------- */
 function boot() {
-  $('hero').innerHTML = tileHTML(6, 6, { v: true }) + tileHTML(3, 5, { v: true });
   if (typeof Peer === 'undefined') { info('Não foi possível carregar', 'Verifique sua internet e recarregue a página.', () => location.reload()); return; }
   const raw = new URLSearchParams(location.search).get('sala');
   const sala = digits4(raw).length === 4 ? digits4(raw) : '';
